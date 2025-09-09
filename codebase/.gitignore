@@ -46,3 +46,6 @@
 # log
 logs
 *.log
+
+# class
+target
