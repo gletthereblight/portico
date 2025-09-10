@@ -29,32 +29,29 @@ import org.portico2.common.PorticoConstants;
 import org.portico2.common.messaging.MessageType;
 
 /**
- * This is the parent class of all Portico request messages. All messages sent through the Portico
- * framework should extend this message. It contains a number of settings to identify the source
- * and target federates, the timestamp associated with the message, whether immediate processing
- * is required (i.e. the message should not be queued) and so forth.
+ * 所有 Portico 请求消息的父类，所有通过 Portico 框架发送的消息都应继承此类。<br>
+ * 它包含多个用于标识消息源和目标联邦成员、与消息关联的时间戳、是否需要立即处理（即消息不应被排队）等设置。<br>
  * 
  * <p/>
- * <b>Broadcast and Targeted Messages</b>
+ * <b>广播消息与定向消息:</b>
  * <p/>
- * A message is considered broadcast if the target federate for it is set to
- * {@link PorticoConstants#NULL_HANDLE}. This is the default state for all messages. These
- * messages will be sent to all federates rather than just a specific federate.
+ * 如果消息的目标联邦成员被设置为 {@link PorticoConstants#NULL_HANDLE}，则该消息被视为广播消息。<br>
+ * 这是所有消息的默认状态。这些消息将被发送给所有联邦成员，而不仅仅是某个特定成员。<br>
  * 
  * <p/>
- * <b>Immediate Processing Flag</b>
+ * <b>立即处理标志:</b>
  * <p/>
- * A common approach for handing incoming messages is to queue them up somewhere. To signal to any
- * message handling components (or perhaps a connection, depending on the implementation) that a
- * message needs to be handlded immediately, you can set the immediate processing required flag via
- * the {@link #setImmediateProcessingFlag(boolean)} method.
+ * 处理传入消息的一种常见方法是将其在某处排队。<br>
+ * 为了向任何消息处理组件（或根据具体实现，可能是连接）表明某条消息需要立即处理，可以通过 {@link #setImmediateProcessingFlag(boolean)} 方法设置“需要立即处理”标志。
  * 
  * <p/>
- * <b>IMPLEMENTATION NOTE:</b> Although this class *doesn't* implement <code>java.io.Externalizable
- * </code>, it does provide implementations of the required methods so that subclasses can call
- * them if they want to (thus removing the need to handle the parent class data). It also
- * implements private writeObject and readObject methods for faster serialization where a child
- * class is not Externalizable.
+ * <b>实现说明:</b>
+ * <p/>
+ * 尽管此类没有实现 <code>java.io.Externalizable</code> 接口，但它确实提供了所需方法的实现，以便子类在需要时可以调用它们（从而无需手动处理父类的数据）。<br>
+ * 此外，它还实现了私有的 {@link #writeObject} 和 {@link #readObject} 方法，以便在子类未实现 Externalizable 时实现更快的序列化。
+ * 
+ * @author gaop
+ * @date 2025/09/10
  */
 public abstract class PorticoMessage implements Serializable, Cloneable
 {

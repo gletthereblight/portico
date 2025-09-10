@@ -122,19 +122,17 @@ public class LRC
 		// NotificationManager doesn't try to instantiate it!
 //		this.notificationManager.addListener( Priority.LOW, this.state );
 		
-		// initialize the parts of the LRC that should be re-initialized whenever the
-		// federate attached to it resigns and rejoins
+		// 初始化LRC中那些每当与其关联的联邦成员退出并重新加入时都应重新初始化的部分
 		initializeLrc();
 	}
 
 	//----------------------------------------------------------
 	//                    INSTANCE METHODS
 	//----------------------------------------------------------
-	/**
-	 * This should be called when a federate resigned from a federation. It will clear out all
-	 * the existing federation state and reinitialize the messaging infrastructure. Note that this
-	 * will have no effect on the connection.
-	 */
+    /**
+     * 当联邦成员退出联邦时应调用此方法。它将清除所有现有的联邦状态并重新初始化消息传递基础设施。<br>
+     * 此操作不会影响连接本身。<br>
+     */
 	protected void reinitialize()
 	{
 		// reinitialize the state
@@ -147,12 +145,12 @@ public class LRC
 	////////////////////////////////////////////////////////////////////////////////////////
 	///  Configuration Methods   ///////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * So that the messaging components can be properly reinitialized when a federate resigns from
-	 * a federation and then joins another (the same LRC) this method contains all the logic to
-	 * reinitialize the appropriate internal LRC components. This will wipe out the existing
-	 * message sinks and reconfigure them. The connection will remain untouched.
-	 */
+    /**
+     * 为了在联邦成员退出一个联邦并加入另一个联邦（使用同一个LRC）时能够正确地重新初始化消息组件，此方法包含了重新初始化相应LRC内部组件的全部逻辑。<br>
+     * 该方法将清除现有的消息接收器（message sinks）并重新配置它们，而连接（connection）将保持不变。<br>
+     * 
+     * @throws JConfigurationException
+     */
 	private void initializeLrc() throws JConfigurationException
 	{
 		this.incoming = new MessageSink( "incoming", logger );

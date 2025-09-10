@@ -29,16 +29,15 @@ import org.portico2.common.messaging.MessageType;
 import org.portico2.common.services.time.data.TimeStatus;
 
 /**
- * For proper distribution, each federate needs to know about each other federate that exists in a
- * federation. When joining, each federate sends out a join notification so that other federates
- * know its there. However, this will only tell existing federates when a new federate joins. As
- * there is no notice, the joining federate won't know about all the other federates that joined
- * the federation before it. This message is intended to provide a solution to this. When a federate
- * receives a join notification, it should broadcast out an instance of this message containing
- * information about itself, thus informing newly joined federates of its existence. Although this
- * isn't ideal from a network traffic perspective, it is the simplest way to ge the information out
- * there, and the relative infrequency of federates joining a simultion means the excess traffic
- * problem is only a minor (at most) concern.
+ * 为了实现正确的分布式运行，每个联邦成员都需要了解联邦中存在的其他所有联邦成员。<br>
+ * 在加入联邦时，每个联邦成员会发送一条加入通知，以便其他成员知道它的存在。<br>
+ * 然而，这种方法只能让已存在的联邦成员获知有新成员加入。<br>
+ * 由于没有其他机制，新加入的联邦成员将无法了解在它之前加入联邦的其他所有成员。<br>
+ * 此消息旨在解决这一问题，当一个联邦成员收到加入通知时，它应广播一条包含自身信息的该消息实例，从而向新加入的成员告知自己的存在。<br>
+ * 尽管从网络流量的角度来看这种方法并非理想，但这是最简单的信息分发方式，而且由于联邦成员加入模拟的频率相对较低，因此额外流量带来的问题最多只是一个微不足道的顾虑。<br>
+ * 
+ * @author gaop
+ * @date 2025/09/10
  */
 public class RoleCall extends PorticoMessage implements Externalizable
 {

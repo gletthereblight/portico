@@ -19,20 +19,22 @@ import org.portico.utils.messaging.PorticoMessage;
 import org.portico2.common.messaging.MessageType;
 
 /**
- * This message is used to find out where (if at all) an RTI is running. It should only be
- * handled inside the RTI.
+ * 此消息用于查询RTI正在何处运行（如果已运行）。它应仅在RTI内部进行处理.
+ * 
+ * @author gaop
+ * @date 2025/09/10
  */
-public class RtiProbe extends PorticoMessage
-{
+public class RtiProbe extends PorticoMessage {
 	//----------------------------------------------------------
 	//                    STATIC VARIABLES
 	//----------------------------------------------------------
+    private static final long serialVersionUID = 2122061799481455466L;
 
 	//----------------------------------------------------------
 	//                   INSTANCE VARIABLES
 	//----------------------------------------------------------
 
-	//----------------------------------------------------------
+    //----------------------------------------------------------
 	//                      CONSTRUCTORS
 	//----------------------------------------------------------
 	public RtiProbe()

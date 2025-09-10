@@ -17,11 +17,11 @@ package org.portico2.common.services.federation.msg;
 import org.portico.utils.messaging.PorticoMessage;
 import org.portico2.common.messaging.MessageType;
 
-public class Connect extends PorticoMessage
-{
-	//----------------------------------------------------------
+public class Connect extends PorticoMessage {
+    //----------------------------------------------------------
 	//                    STATIC VARIABLES
 	//----------------------------------------------------------
+    private static final long serialVersionUID = -7129652063799600915L;
 
 	//----------------------------------------------------------
 	//                   INSTANCE VARIABLES

@@ -116,8 +116,8 @@ public class LRCHandlerRegistry
 	
 	private static void loadIeee1516e( LRC lrc )
 	{
-		// object map for configuration of handlers - stuffed with a reference to the LRC
-		Map<String,Object> settings = new HashMap<>();
+		// 对象映射，存储处理器配置——其中填充了对LRC的引用
+        Map<String, Object> settings = new HashMap<>();
 		settings.put( IMessageHandler.KEY_LRC, lrc );
 		
 		///////////////////////////////////////////////////////////////////////////
