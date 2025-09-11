@@ -20,13 +20,14 @@ import org.portico2.common.messaging.MessageType;
 import org.portico2.common.messaging.ResponseMessage;
 
 /**
+ * <pre>
  * NEW Structure of a message:
- *   - Header
+ *   - Header {@link Header}
  *   - Payload
- *   - Auth Token (Optional) // layered in by auth protocol
- *   - Nonce      (Optional) // layered in by encryption protocol
+ *   - Auth Token (Optional) // 由认证协议添加
+ *   - Nonce      (Optional) // 由加密协议添加
+ * </pre>
  */
-
 public class Message
 {
 	//----------------------------------------------------------
@@ -53,15 +54,15 @@ public class Message
 	//----------------------------------------------------------
 	//                      CONSTRUCTORS
 	//----------------------------------------------------------
-	/**
-	 * Construct a new {@link Message} object that will be passed down the protocol stack.
-	 * Note that this call will <b>trigger a message deflation</b>, an expensive process.
-	 * Once constructed, the buffer inside this instance will contain the serialized contents. 
-	 * 
-	 * @param request The request that has been made
-	 * @param calltype The type of call that it is (will go into the header)
-	 * @param requestId The request ID, if any, for the call (will go into the header)
-	 */
+    /**
+     * 构造一个新的 {@link Message} 对象，该对象将被传递到协议栈中向下传输。<br>
+     * 注意：此调用会<b>触发消息压缩（deflation）</b>，这是一个开销较大的过程。<br>
+     * 构造完成后，该实例内部的缓冲区将包含序列化后的内容。<br>
+     * 
+     * @param request 发起的请求
+     * @param calltype 调用的类型（将写入消息头）
+     * @param requestId 该调用的请求ID（如果有，将写入消息头）
+     */
 	public Message( PorticoMessage request, CallType calltype, int requestId )
 	{
 		this.calltype = calltype;
@@ -93,14 +94,12 @@ public class Message
 	//----------------------------------------------------------
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Tells the message to take the contents of the buffer and inflate it into a full
-	 * {@link PorticoMessage} object, returning the result. The request object is lazy
-	 * loaded, so if you call {@link #getOriginalRequest()} before this method has been called,
-	 * the message class will implicitly call it on your behalf.
-	 * 
-	 * @return The {@link PorticoMessage} that represents the contained byte[] buffer (if present).
-	 */
+    /**
+     * 通知消息对象将其缓冲区中的内容解析并构造成一个完整的 {@link PorticoMessage} 对象，并返回结果。<br>
+     * 请求对象采用延迟加载机制，因此如果你在此方法被调用前调用 {@link #getOriginalRequest()}，消息类会隐式地代表你调用此方法。<br>
+     * 
+     * @return 表示内部字节数组缓冲区（如果存在）的 {@link PorticoMessage} 对象。
+     */
 	public final PorticoMessage inflateAsPorticoMessage()
 	{
 		this.request = MessageHelpers.inflate2( buffer, PorticoMessage.class ); 

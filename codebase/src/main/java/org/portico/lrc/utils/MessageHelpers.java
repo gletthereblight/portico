@@ -56,33 +56,31 @@ public class MessageHelpers
 	///////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////  Message Marshalling and Unmarshalling  /////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * This method will take the given message and turn it into a <code>byte[]</code>.
-	 * <p/>
-	 * 
-	 * The resulting byte[] will have a header according to the Portico standard
-	 * (see {@link #deflateHeader(byte[], int, PorticoMessage, CallType, int, boolean, int)}.
-	 * <p/>
-	 * 
-	 * <b>Note:</b> If the message supports manual marshaling (where the reflection-based
-	 * serialization is ignored, instead providing total control to the message class), then
-	 * that process will be used in preference (resulting in
-	 * {@link PorticoMessage#marshal(java.io.ObjectOutput)} being called). This should not be
-	 * used unless you know what you are doing and have added the message id to the hardcoded
-	 * private method {@link #manuallyUnmarshal(ObjectInputStream, LRC)}).
-	 * 
-	 * @param message    The message to encode
-	 * @param calltype   The type of Portico call this is (Data, ControlSync, ...)
-	 * @param requestId  The id of the request if it is a control message (0 if it is not)
-	 */
+    /**
+     * 此方法将把给定的消息转换为一个 <code>byte[]</code>.
+     * <p/>
+     * 
+     * 生成的字节数组将根据 Portico 标准包含一个消息头 （参见
+     * {@link Header#writeHeader(byte[], int, PorticoMessage, CallType, int, int)}）
+     * <p/>
+     * 
+     * <b>注意：</b><br>
+     * 如果该消息支持手动序列化（即忽略基于反射的序列化过程，而将完全控制权交给消息类）， 则会优先使用该处理流程（从而调用 {@link PorticoMessage#marshal(java.io.ObjectOutput)}
+     * 方法）。<br>
+     * 除非你清楚自己在做什么，并且已将消息ID添加到硬编码的私有方法 {@link #manuallyUnmarshal(ObjectInputStream, LRC)} 中， 否则不应使用此功能。<br>
+     * 
+     * @param message 要编码的消息
+     * @param calltype 此调用的类型(Data, ControlSync, ...)
+     * @param requestId 如果是控制消息，则为此请求的ID（如果不是，则为0）
+     */
 	public static final byte[] deflate2( PorticoMessage message,
 	                                     CallType calltype,
 	                                     int requestId )
 	{
-		// Step 1. Write empty header (update later) and then full body
-		//         We write the body first because we need to know its length to include
-		//         in the header. For efficiency, we write an empty block of bytes into
-		//         the payload as space for the header. We'll overwrite them after.
+		// Step 1. 先写入空的消息头（稍后更新），再写入完整的消息体
+        //         我们首先写入消息体，因为需要知道其长度才能将其包含在消息头中。
+        //         为了提高效率，我们先在载荷位置写入一个空的字节块，作为消息头的预留空间。
+        //         稍后我们再将其覆盖（写入实际的消息头内容）。
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try
 		{
@@ -109,32 +107,27 @@ public class MessageHelpers
 			throw new RuntimeException( "couldn't convert message ["+message.getType()+"] into byte[]", ioex );
 		}
 		
-		// Step 2. Get the buffer.
-		//         Now that we have written the payload into a buffer, we have
-		//         everything we just need to clean up and get access to the
-		//         buffer so we can overwrite the header section.
+		// Step 2. 获取缓冲区。
+        //         现在我们已将载荷写入缓冲区，接下来只需进行一些清理工作，
+        //         并获取对该缓冲区的访问权限，以便我们可以覆盖（写入）消息头部分。
 		byte[] buffer = baos.toByteArray();
 
-		// Step 3. Write the header.
-		//         Gather up all the information we need and write the header into
-		//         the empty space we put into the buffer when first marshalling the
-		//         payload.
-		
+		// Step 3. 写入消息头。
+        //         收集所有需要的信息，并将消息头写入缓冲区中最初为载荷预留的空白区域。
 		// create the output stream with the given size (or resizable if -1 is provided)
 		int payloadLength = buffer.length - Header.HEADER_LENGTH;
 		Header.writeHeader( buffer, 0, message, calltype, requestId, payloadLength );
 		return buffer;
 	}
 
-	/**
-	 * This method just calls {@link #deflate2(ResponseMessage, int, int, int, int)}. It takes
-	 * all the information it needs for the header from the given request message.
-	 * 
-	 * @param response The response message to deflate
-	 * @param requestId The ID of the request we are responding to
-	 * @param request The original request message (from which we get federate id, source/target, ...)
-	 * @return A byte[] version of the message ready for transmission
-	 */
+    /**
+     * 此方法仅调用 {@link #deflate2(ResponseMessage, PorticoMessage, int, int, int, int)}。 它从给定的请求消息中获取消息头所需的所有信息。
+     * 
+     * @param response 要压缩的响应消息
+     * @param requestId 我们正在响应的请求的ID
+     * @param request 原始的请求消息（从中获取联邦成员ID、源/目标等信息）
+     * @return 准备好用于传输的字节数组（byte[]）格式的消息
+     */
 	public static final byte[] deflate2( ResponseMessage response,
 	                                     int requestId,
 	                                     PorticoMessage request )
@@ -143,22 +136,21 @@ public class MessageHelpers
 		                 request,
 		                 requestId,
 		                 request.getTargetFederation(),
-		                 request.getTargetFederate(),   // flipped from request
-		                 request.getSourceFederate() ); // flipped from request
+		                 request.getTargetFederate(),   // 与请求中的方向相反
+		                 request.getSourceFederate() ); // 与请求中的方向相反
 	}
 	
-	/**
-	 * Deflate and package the given response message. Response messages are a bit special. Their
-	 * is a lot of information that they don't require compared to a request message. This method
-	 * takes only the response message and the metadata that needs to be packaged into the header.
-	 * 
-	 * @param response The message object to deflate
-	 * @param requestId The ID of the request we are responding to
-	 * @param targetFederation ID of the federation (package in header)
-	 * @param sourceFederate ID of sender federate  (package in header)
-	 * @param targetFederate ID of target federate  (package in header)
-	 * @return A byte[] version of the message ready for transmission
-	 */
+    /**
+     * 压缩（Deflate）并打包给定的响应消息。响应消息比较特殊，与请求消息相比，它们不需要携带大量信息。<br>
+     * 该方法仅接收响应消息以及需要打包到消息头中的元数据。<br>
+     * 
+     * @param response 要压缩的消息对象
+     * @param requestId 正在响应的请求的ID
+     * @param targetFederation 联邦的ID（打包进消息头）
+     * @param sourceFederate 发送方联邦成员的ID（打包进消息头）
+     * @param targetFederate 目标联邦成员的ID（打包进消息头）
+     * @return 准备好用于传输的字节数组（byte[]）格式的消息
+     */
 	private static final byte[] deflate2( ResponseMessage response,
 	                                      PorticoMessage request,
 	                                      int requestId,
@@ -166,10 +158,10 @@ public class MessageHelpers
 	                                      int sourceFederate,
 	                                      int targetFederate )
 	{
-		// Step 1. Write the body of the message
-		//         We write the body first because we need to know its length to include
-		//         in the header. For efficiency, we write an empty block of bytes into
-		//         the payload as space for the header. We'll overwrite them after.
+		// Step 1. 写入消息体
+		//         我们首先写入消息体，因为需要知道其长度才能将其包含在消息头中。
+		//         为了提高效率，我们先在载荷位置写入一个空的字节块，作为消息头的预留空间。
+		//         稍后我们再将其覆盖（写入实际的消息头内容）。
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try
 		{
@@ -186,52 +178,42 @@ public class MessageHelpers
 			throw new RuntimeException( "couldn't convert object ["+response.getClass()+"] into byte[]", ioex );
 		}
 		
-		// Step 2. Get the buffer.
-		//         Now that we have written the payload into a buffer, we have
-		//         everything we just need to clean up and get access to the
-		//         buffer so we can overwrite the header section.
+		// Step 2. 获取缓冲区。
+		//         现在我们已将载荷写入缓冲区，接下来只需进行一些清理工作，
+		//         并获取对该缓冲区的访问权限，以便我们可以覆盖（写入）消息头部分。
 		byte[] buffer = baos.toByteArray();
 
-		// Step 3. Write the header.
-		//         Gather up all the information we need and write the header into
-		//         the empty space we put into the buffer when first marshalling the
-		//         payload.
+		// Step 3. 写入消息头。
+		//         收集所有需要的信息，并将消息头写入缓冲区中最初为载荷预留的空白区域。
 		// create the output stream with the given size (or resizable if -1 is provided)
 		int payloadLength = buffer.length - Header.HEADER_LENGTH;
 		Header.writeResponseHeader( buffer, 0, requestId, response, request, payloadLength );
 		return buffer;
 	}
 
-	/**
-	 * This method will take the given data and convert it into a Java object. After doing so,
-	 * it will attempt to cast the object to the given type before returning it.
-	 * <p/>
-	 * <b>Note:</b> If the message supports manual unmarshaling (where the reflection-based
-	 * deserialization is ignored, instead providing total control to the message class), then
-	 * that process will be used in preference (resulting in
-	 * {@link PorticoMessage#unmarshal(java.io.ObjectInput)} being called). This should not be
-	 * used unless you know what you are doing and have added the message id to the hardcoded
-	 * private method {@link #manuallyUnmarshal(ObjectInputStream, LRC)}).
-	 */
+    /**
+     * 此方法将获取给定的数据并将其转换为一个Java对象。转换完成后，会尝试将该对象强制转换为指定的类型再返回。
+     * </p>
+     * <b>注意：</b><br>
+     * 如果该消息支持手动反序列化（即忽略基于反射的反序列化过程，而将完全控制权交给消息类），则会优先使用该处理流程（从而调用 {@link PorticoMessage#unmarshal(java.io.ObjectInput)}
+     * 方法）。<br>
+     * 除非你清楚自己在做什么，并且已将消息ID添加到硬编码的私有方法 {@link #manuallyUnmarshal(ObjectInputStream, LRC)} 中，否则不应使用此功能。
+     */
 	public static final <T> T inflate2( byte[] data, Class<T> expectedType )
 	{
 		return inflate2( data, expectedType, null );
 	}
 	
-	/**
-	 * This method will take the given data and convert it into a Java object. After doing so,
-	 * it will attempt to cast the object to the given type before returning it. It also accepts
-	 * a filter that will be passed on to the message if it uses manual marshalling. That filter
-	 * can be used by the message to short-circuit potentially expensive inflation if it isn't
-	 * needed (however the filter determines that).
-	 * <p/>
-	 * <b>Note:</b> If the message supports manual unmarshaling (where the reflection-based
-	 * deserialization is ignored, instead providing total control to the message class), then
-	 * that process will be used in preference (resulting in
-	 * {@link PorticoMessage#unmarshal(java.io.ObjectInput)} being called). This should not be
-	 * used unless you know what you are doing and have added the message id to the hardcoded
-	 * private method {@link #manuallyUnmarshal(ObjectInputStream, LRC)}).
-	 */
+    /**
+     * 此方法将获取给定的数据并将其转换为一个Java对象。转换完成后，会尝试将该对象强制转换为指定的类型再返回。<br>
+     * 该方法还接受一个过滤器参数，如果消息使用手动序列化（marshalling），则会将该过滤器传递给消息。<br>
+     * 消息可以利用此过滤器来判断是否需要进行开销较大的解包（inflation）操作，从而在不需要时跳过该过程。<br>
+     * </p>
+     * <b>注意：</b><br>
+     * 如果该消息支持手动反序列化（即忽略基于反射的反序列化过程，而将完全控制权交给消息类），则会优先使用该处理流程（从而调用 {@link PorticoMessage#unmarshal(java.io.ObjectInput)}
+     * 方法）。<br>
+     * 除非你清楚自己在做什么，并且已将消息ID添加到硬编码的私有方法 {@link #manuallyUnmarshal(ObjectInputStream, LRC)} 中，否则不应使用此功能。
+     */
 	public static final <T> T inflate2( byte[] data, Class<T> expectedType, LRC lrc )
 	{
 		try

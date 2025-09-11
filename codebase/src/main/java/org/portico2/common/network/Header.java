@@ -23,31 +23,27 @@ import org.portico2.common.services.object.msg.SendInteraction;
 import org.portico2.common.services.object.msg.UpdateAttributes;
 
 /**
- * Messages sent over the Portico network are all sent with a particular header. This class
- * represents a header and handles the logic for encoding and decoding it to and from a byte[].
+ * 通过 Portico 网络发送的所有消息都带有特定的消息头。此类表示一个消息头，并处理其与字节数组（byte[]）之间的编码和解码逻辑。.
  * <p/>
  * 
- * Note that this class does not carry any information except for the byte[] representing a
- * payload with a header. It will only look at the first {@link #HEADER_LENGTH} of that payload.
- * Any time you call a <code>getXxx()</code> method, it will re-extract that information from
- * the header. It does not store or cache any information. As such, its construction is very
- * light weight. No copies, no decoding. If you only want one value you can safely wrap the
- * payload in the header class and get the information you need without triggering excess
- * processing of the header.
- * 
- * <b>Encoding</b><p/>
- * The various <code>writeXxx()</code> methods will write individual pieces of data into the
- * header at the appropriate locations. There are two static methods that take the information
- * that is needed when building messages for the most common types of situations.
- * <p/>
- * Note that the information is written directly into the payload, overwriting whatever is there.
- * No copy or cache of the data is made or held for later.
+ * 注意，此类除了代表载荷（包含消息头）的字节数组外，不携带任何其他信息。<br>
+ * 它仅查看该载荷的前 {@link #HEADER_LENGTH} 个字节。<br>
+ * 每当调用一个 <code>getXxx()</code> 方法时，它都会重新从消息头中提取相应信息。<br>
+ * 它不会存储或缓存任何信息。因此，它的构造非常轻量级：不进行复制，不解码。<br>
+ * 如果你只需要获取其中一个值，可以安全地将载荷包装在该头类中，然后获取所需信息，而不会触发对消息头的额外处理。<br>
  * <p/>
  * 
- * <b>Decoding</b><p/>
- * The various <code>getXxx</code> methods in this class will read from the appropriate position
- * in a payload and return the appropriate value. Note that they do not store or cache these
- * values in any way. They read and decode them every time they are called.
+ * <b>编码</b>
+ * <p/>
+ * 此类中的各个 <code>writeXxx()</code> 方法会将单个数据项写入消息头的相应位置。<br>
+ * 还有两个静态方法，用于在构建最常见类型消息时，接收所需的信息。<br>
+ * 注意，这些信息是直接写入载荷的，会覆盖原有内容，不会制作或保留数据的副本或缓存以供后续使用。
+ * <p/>
+ * 
+ * <b>解码</b>
+ * <p/>
+ * 此类中的各个 <code>getXxx</code> 方法会从载荷的相应位置读取并返回适当的值。<br>
+ * 注意，它们不会以任何形式存储或缓存这些值，每次调用时都会重新读取和解码。<br>
  */
 public class Header
 {
@@ -233,10 +229,8 @@ public class Header
 	////////////////////////////////////////////////////////////////////////////////////////
 	///  Identifier Line Methods   /////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////
-	// The Identifier line is the second row of 4 bytes within the fixed portin of
-	// each header. It contains ID information such as the Call Type, Message Type,
-	// Federation ID and either the Request ID (if a control message) or the class
-	// handle used for filtering (if it is a data message). 
+	// 标识行是每个消息头固定部分中第二行的4个字节。
+	// 它包含标识信息比如调用类型（Call Type），消息类型（Message Type），联邦ID（Federation ID）以及请求ID（如果是控制消息）或用于过滤的类句柄（如果是数据消息）
 	public final CallType getCallType()
 	{
 		return CallType.fromId( BitHelpers.readUint4(buffer,offset+4,0) );
