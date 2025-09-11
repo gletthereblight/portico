@@ -26,7 +26,7 @@ import org.portico2.common.network.Header;
 import org.portico2.common.network.configuration.transport.TcpConfiguration;
 
 /**
- * This class represents a bi-directional channel over which messages can be passed and received.
+ * 此类表示一个可传递和接收消息的双向通道。
  */
 public class TcpChannel
 {
