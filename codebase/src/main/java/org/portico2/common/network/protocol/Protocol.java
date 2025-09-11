@@ -23,28 +23,25 @@ import org.portico2.common.network.configuration.protocol.ProtocolConfiguration;
 import org.portico2.common.network.transport.Transport;
 
 /**
- * {@link Protocol} implementations sit inside a {@link ProtocolStack}, which in turn sits inside
- * a {@link Connection} object. Within the stack, Protocol objects are arranged in a chain, where
- * each is linked to the next (both forward and back).<p/>
+ * {@link Protocol} 的实现位于一个 {@link ProtocolStack} 内部，而 {@link ProtocolStack} 又位于 一个 {@link Connection} 对象内部。<br>
+ * 在栈中，Protocol 对象以链式结构排列， 每个对象都与下一个（向前和向后）对象相连。
+ * </p>
  * 
- * Each Protocol has a connection to the next and previous implementation in the stack so that
- * it can pass messages up or down. If it wants to terminate processing on a message, it can simply
- * not pass the message any further. It can also generate additional internal messages needed to
- * support requests from the host connection (automatic action) or even to support inter-protocol
- * communication. <p/>
+ * 每个 Protocol 都连接到栈中的下一个和上一个实现，以便能够将消息向上或向下传递。<br>
+ * 如果某个协议希望终止对某条消息的处理，它可以简单地不再将该消息继续传递。<br>
+ * 它还可以生成额外的内部消息，以支持来自主机连接的请求（自动操作），甚至支持协议间的通信。
+ * </p>
  * 
- * A {@link Protocol} implementation should use the methods {@link #passDown(Message)} and
- * {@link #passUp(Message)} to forward the messages on. These will handle the next/previous
- * references appropriately.
+ * {@link Protocol} 实现应使用 {@link #passDown(Message)} 和 {@link #passUp(Message)} 方法来转发消息。这些方法会正确地处理前后节点的引用关系。
+ * </p>
  * 
- * So, when a message is received from the application, it is passed to the ProtocolStack, which
- * in turn passes it to the first protocol it contains. That protocol then processes is and through
- * {@link #passDown(Message)} hands it off down the chain, and so on until it reaches the transport
- * where it is put on the network. <p/>
  * 
- * The same is true in reverse. When a message is received from a {@link Transport}, it is passed
- * up the stack to the protocol immediately before the transport, which in turn passes it to the
- * one before it and so on. <p/>
+ * 因此，当从应用层接收到消息时，它会被传递给 ProtocolStack，ProtocolStack 再将其传递给其包含的第一个协议。 该协议处理完消息后，通过 {@link #passDown(Message)}
+ * 将其沿链向下传递，如此往复，直到消息到达传输层并被发送到网络上。
+ * <p/>
+ * 
+ * 反向过程也是如此。当从 {@link Transport} 接收到消息时，它会沿着栈向上传递，首先交给传输层之前的协议， 该协议再将其传递给前一个协议，依此类推。
+ * </p>
  */
 public abstract class Protocol
 {
@@ -90,30 +87,25 @@ public abstract class Protocol
 		this.doConfigure( configuration, hostConnection );
 	}
 
-	/**
-	 * This method should be overridden in all child types, but it is never called directly
-	 * by external code. Rather, the {@link #configure(ProtocolConfiguration, Connection)}
-	 * is called, which in turn extracts the necessary configuration that is generic to all
-	 * types before passing execution to this method, giving each specific protocol a change
-	 * to configure itself.
-	 * 
-	 * @param configuration The configuration object for the protocol. Expected to be cast to a sub-type
-	 * @param hostConnection The connection the protocol is being deployed into. Can also find out whether
-	 *                       we are in the LRC, RTI or Forwarder from here.
-	 * @throws JConfigurationException If the is a problem with any of the given configuration data given
-	 */
+    /**
+     * 此方法应在所有子类型中被重写，但永远不会被外部代码直接调用。<br>
+     * 但是它会被 {@link #configure(ProtocolConfiguration, Connection)}
+     * 调用，该方法首先提取对所有类型通用的必要配置，然后将执行流程传递给此方法，使每个具体协议有机会进行自身的配置。<br>
+     *
+     * @param configuration 配置对象，预期会被强制转换为某个子类型
+     * @param hostConnection 该协议将被部署到的连接对象。也可由此获知我们当前处于LRC、RTI还是转发器中。
+     * @throws JConfigurationException 如果提供的配置数据存在任何问题
+     */
 	protected abstract void doConfigure( ProtocolConfiguration configuration, Connection hostConnection )
 	    throws JConfigurationException;
 
 	/**
-	 * The connection is opening, so it is time for the protocol to ensure it is set up
-	 * according to its configuration. 
+	 * 连接正在打开，因此 protocol 需要根据其配置确保自身已正确初始化和设置。
 	 */
 	public abstract void open();
 	
 	/**
-	 * The connection is closing, so it is time to close any additional connections we may
-	 * have opened, close threads or files and generally clean up.
+	 * 连接正在关闭，此时开始进行常规的清理工作，如关闭已打开的附加连接、关闭线程或文件等。
 	 */
 	public abstract void close();
 

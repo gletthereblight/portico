@@ -21,27 +21,28 @@ import org.portico2.common.network.protocol.Protocol;
 import org.portico2.common.network.transport.Transport;
 
 /**
- * The {@link ProtocolStack} manages the set of {@link Protocol} implementations that
- * are contained, ensuring that each is linked to its next component both up and down
- * the stack. <p/>
+ * 负责管理其所包含的一组 {@link Protocol} 实现，确保每个协议组件都与其上下相邻的组件正确连接。
+ * <p/>
  * 
- * The {@link ProtocolStack} will ensure that the final component in the stack is <i>always</i>
- * the {@link Transport} that has been loaded for the connection.  </p>
+ * 该类会确保栈中的最后一个组件<i>always</i>是此连接加载的 {@link Transport}。
+ * <p/>
  * 
- * The stack has two directions: 
- *     - down() From Application >>> Transport
- *     -   up() From Transport >>> Application
- *
- *   Application      | Messages sent to the network are
- *      Protocol #1   | passed "down" the stack, to each
- *      Protocol #2   | protocol in the order declared here.
- *      Transport     V
- *
- * When a message is received from the transport, it is passed "up" the stack.
- * The message is passed to each protocol in **REVERSE** order (from bottom to top).
+ * 它有两个数据流向：<br>
+ * - down() 从 Application 到 Transport<br>
+ * - up() 从 Transport 到 Application<br>
  * 
- * To pass a message to the network, hand it off to {@link #down(Message)}. To pass a message
- * up the stack, hand it {@link #up(Message)}. 
+ * <pre>
+ *   Application   | 
+ *   Protocol #1   | 
+ *   Protocol #2   |
+ *   Transport     V
+ * </pre>
+ * 
+ * 发送到网络的消息会沿着栈“向下”传递，按此处声明的顺序依次经过每个协议。<br>
+ * 当从传输层接收到消息时，消息会沿着栈“向上”传递，消息会以相反的顺序（从栈底到栈顶）传递给每个协议。<br>
+ * <p/>
+ * 要将消息发送到网络，请将其传递给 {@link #down(Message)} 方法。<br>
+ * 要将消息向上传递，请将其传递给 {@link #up(Message)} 方法。<br>
  */
 public class ProtocolStack
 {

@@ -29,35 +29,28 @@ import org.portico2.common.network.CallType;
 import org.portico2.common.network.Header;
 
 /**
- * The Bundler class handles the buffering and flushing of a series of bytes to a
- * {@link DataOutputStream}. It acts as an intermediary between the caller and the
- * stream, and will store up messages so that they can be sent in larger chunks rather
- * than one at a time, making more efficient use of available write-bandwidth.
+ * Bundler类负责将一系列字节缓冲并刷新到 {@link DataOutputStream} 中。<br>
+ * 它作为调用者与流之间的中间层，会缓存消息，以便能够以更大的数据块发送，而不是逐条发送，从而更高效地利用可用的写入带宽。<br>
  * <p/>
  * 
- * The bundler has three properties that control when and how messages are flushed:
+ * Bundler具有三个属性，用于控制消息何时以及如何被刷新:<br>
  * 
  * <ol>
- *     <li><b>Enabled</b>: If the bundler is disabled, a flush will happen on every call.</li>
+ * <li><b>Enabled</b>: 如果Bundler被禁用，则每次调用都会触发一次刷新。</li>
  *
- *     <li><b>Max Size</b>: This is the maximum number of bytes that will be buffered before a
- *                          flush is triggered. If a submission pushes the buffer over this limit,
- *                          it will also trigger an instant flush.</li>
+ * <li><b>Max Size</b>: 这是在触发刷新前可缓冲的最大字节数。如果提交的数据导致缓冲区超过此限制，将立即触发一次刷新。</li>
  *
- *     <li><b>Max Time</b>: If the bundler is enabled, this is the maximum amount of time that
- *                          data can sit inside the bundler before being flushed. This is to
- *                          ensure that messages don't sit forever, waiting for the last few
- *                          bytes needed to trigger a flush. Time is in millis.</li>
+ * <li><b>Max Time</b>: 如果Bundler处于启用状态，这是数据在被刷新前可在Bundler中停留的最长时间。<br>
+ * 这是为了确保消息不会无限期等待，直到凑够触发刷新所需的最后几个字节。<br>
+ * 时间单位为毫秒。</li>
  * </ol>
  * 
- * <b>Flushing a Buffer</b>
- * As per the above, a flush will only be triggered if either the bytes have been sitting around
- * for too long, or the number of bytes in the buffer exceeds the limit (or if bundling is disabled
- * entirely).
+ * <b>刷新缓冲区</b>
+ * <p/>
+ * 根据上述说明，只有当数据在缓冲区中停留时间过长，或缓冲区中的字节数超过了限制时（或者Bundler完全被禁用），才会触发刷新操作。
  * <p/>
  * 
- * Flushing of the <i>buffer will happen on a <b>separate thread</b></i>. As such, a bundler will
- * not accept messages or process them until after {@link #startBundler()} has been called.
+ * 缓冲区的刷新将在<b>单独的线程</b>中进行</i>。因此，在调用 {@link #startBundler()} 之前， Bundler不会接收或处理任何消息。<br>
  */
 public class Bundler
 {
@@ -167,32 +160,30 @@ public class Bundler
 	////////////////////////////////////////////////////////////////////////////////////////
 	///  Bundling Methods   ////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Submit a message for bundling.
-	 * <p/>
-	 * 
-	 * If the size limit is now broken, a flush will happen and this method will block.
-	 * Otherwise it will buffer the request and then return immediately. If this is the first
-	 * message since the last flush, the timer will be armed so that if our size cap isn't
-	 * broken in a configurable amount of time (20ms by default), a flush will happen anyway.
-	 * <p/>
-	 * 
-	 * This method will block in two instances:
-	 *   <ul>
-	 *    <li>If the total size of bundled messages exceeds the limit, causing a flush</li>
-	 *    <li>If a flush is already under way</li>
-	 *   </ul>
-	 * 
-	 * <b>Disable Bundling</b>
-	 * Bundling can be disabled in configuration. If this is the case, submitted messages
-	 * will immediately be flushed to the router.
-	 * 
-	 * <b>Control Sync and Control Response Messages</b>
-	 * These two types of messages can be time sensitive. As such, if you submit a message with
-	 * either of these headers it will trigger an immediate flush, regardless of queue state.
-	 * 
-	 * @param message the body of the message to send
-	 */
+    /**
+     * 提交一条消息用于打包。
+     * <p/>
+     *
+     * 如果提交后超出大小限制，将触发一次刷新，并且该方法会阻塞。<br>
+     * 否则，它会将请求缓存并立即返回。如果这是上次刷新之后的第一条消息，将启动一个定时器，以便在可配置的时间内（默认为20毫秒）未达到大小上限时，仍然执行一次刷新。<br>
+     * <p/>
+     *
+     * 该方法会在以下两种情况下阻塞：<br>
+     * <ul>
+     * <li>打包消息的总大小超过限制，从而触发刷新</li>
+     * <li>当前正在进行一次刷新操作</li>
+     * </ul>
+     *
+     * <b>禁用打包功能</b><br>
+     * 打包功能可以通过配置禁用。如果已禁用，提交的消息将立即被刷新发送到路由器。<br>
+     * <p/>
+     *
+     * <b>控制同步和控制响应消息</b><br>
+     * 这两类消息可能对时间敏感。因此，如果你提交的消息包含其中任一类型的消息头，无论队列状态如何，都将立即触发一次刷新。<br>
+     * <p/>
+     *
+     * @param message 要发送的消息正文
+     */
 	public void submit( byte[] message )
 	{
 		lock.lock();

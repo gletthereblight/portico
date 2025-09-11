@@ -22,19 +22,14 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- * For each {@link PorticoMessage Request} that is sent, a response is needed. This class is the
- * parent of all response messages. This class can represent either a basic "success" or "error"
- * response via its {@link #isError()} flag. Users can design their own custom response types
- * (the same way they design their own requests) by extending this class. For your convenience,
- * the messaging framework provides a couple of helper extensions:
+ * 对于每个发送的 {@link PorticoMessage Request}，都需要一个响应。此类是所有响应消息的父类。<br>
+ * 该类可以通过其 {@link #isError()} 标志来表示基本的“成功”或“错误”响应。<br>
+ * 用户可以通过继承此类来设计自己的自定义响应类型（方式与设计自定义请求相同）。<br>
+ * 为方便起见，消息框架提供了几个辅助的扩展类：<br>
  * 
  * <ul>
- *   <li><b>{@link ExtendedSuccessMessage}</b>: A "success" message that allows values to be
- *       returned with it (the {@link ResponseMessage} class only allows you to mark as response
- *       as a success or failure).</li>
- *   <li><b>{@link ErrorResponse}</b>: An "error" message that allows additional error information
- *       to be provided with the response. This includes things like an Exception or an error
- *       message.</li>
+ * <li><b>{@link ExtendedSuccessMessage}</b>: 一种“成功”消息，允许携带返回值一起发送，（而 {@link ResponseMessage} 类本身仅允许将响应标记为成功或失败。</li>
+ * <li><b>{@link ErrorResponse}</b>: 一种“错误”消息，允许在响应中提供额外的错误信息，包括异常对象或错误消息等。</li>
  * </ul>
  */
 public class ResponseMessage implements Serializable

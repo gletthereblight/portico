@@ -21,8 +21,7 @@ import java.io.ObjectOutput;
 import java.util.HashMap;
 
 /**
- * A MessageContext aggregates together a {@link PorticoMessage} and a {@link ResponseMessage} into
- * a single logical unit that can be passed around the various messaging framework components.
+ * MessageContext 将一个 {@link PorticoMessage} 和一个 {@link ResponseMessage} 聚合在一起， 形成一个单一的逻辑单元，以便在各个消息框架组件之间传递。
  */
 public class MessageContext implements Externalizable
 {

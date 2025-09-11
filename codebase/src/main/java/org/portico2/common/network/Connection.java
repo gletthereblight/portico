@@ -31,39 +31,39 @@ import org.portico2.common.network.transport.Transport;
 import org.portico2.common.services.federation.msg.RtiProbe;
 
 /**
- * The {@link Connection} class is the main interface for the rest of the Portico framework
- * to the networking stack. Within each instance there is:
+ * 是 Portico 框架其余部分与网络协议栈交互的主要接口。每个实例包含：<br>
  * 
  * <ul>
- *   <li>A {@link ProtocolStack}: Handles the processing of messages as they are sent/received.</li>
- *   <li>An {@link ITransport}: The actual network component that does the raw sending/receiving.</li>
- *   <li>Other misc items (such as a component to correlate requests to resposnes)...</li>
+ * <li>一个 {@link ProtocolStack}: 负责处理发送和接收过程中的消息。</li>
+ * <li>一个 {@link Transport}: 实际进行原始数据收发的网络组件。</li>
+ * <li>其他杂项（例如，用于关联请求与响应的组件）...</li>
  * </ul>
+ * </p>
  * 
- * <b>Sending Messages</b>
- * When a message is given to the connection for sending, it will pass it <i>DOWN</i> the protocol
- * stack, allowing each {@link IProtocol} to process the message. At the conclusion of this process
- * the message is pushed into the {@link ITransport} for sending.
- * <p/>
+ * <b>发送消息</b> <br>
+ * 当有消息交给连接对象用于发送时，它会将消息沿协议栈 <i>向下</i> 传递，使每个 {@link Protocol} 都有机会处理该消息。<br>
+ * 此过程结束后，消息会被推送到 {@link Transport} 进行实际发送。
+ * </p>
  * 
- * <b>Receiving Messages</b>
- * When a message is received from the underlying {@link ITransport}, it is passed <i>UP</i> the
- * protocol stack until it is received by the connection. If the message is a control response,
- * the connection will try to link it up with any outstanding request. If it is any other type,
- * the message will be passed to the {@link IApplicationReceiver} for processing by the RTI.
+ * <b>接收消息</b> <br>
+ * 当从底层的 {@link Transport} 接收到消息时，它会沿协议栈 <i>向上</i> 传递，直到被连接对象接收。<br>
+ * 如果该消息是一个控制响应，连接会尝试将其与任何未完成的请求进行匹配。<br>
+ * 如果属于其他类型， 消息将被传递给 {@link IApplicationReceiver}，由 RTI 进行后续处理。<br>
  */
 public class Connection
 {
 	//----------------------------------------------------------
 	//                      ENUMERATIONS
 	//----------------------------------------------------------
-	/** Every connection sits inside some sort of component. This enum identifies
-	    the host component that the connection is embedded in. */
+    /**
+     * 每个连接都位于某种组件之中。此枚举用于标识该连接所嵌入的宿主组件。
+     */
 	public enum Host{ LRC, RTI, Forwarder; }
 
-	/** Every connection can be in one of three states. It is either not connected
-	    to anything, Connected to an RTI but not joined, or Connected _and_ Joined. */
-	public enum Status{ Disconnected, Connected, Joined; }
+    /**
+     * 每个连接可以处于三种状态之一：未连接到任何对象、已连接到RTI但尚未加入，或已连接并已加入。
+     */
+    public enum Status{ Disconnected, Connected, Joined; }
 
 	//----------------------------------------------------------
 	//                    STATIC VARIABLES
@@ -88,15 +88,14 @@ public class Connection
 	//----------------------------------------------------------
 	//                      CONSTRUCTORS
 	//----------------------------------------------------------
-	/**
-	 * Creates a new connection that will list inside the host type identified by the
-	 * {@lik Host} enum. Additionally, we also pass in a reference to the actual host
-	 * object itself. Anything special that absolutely NEEDS access back to the host
-	 * can cast this to the appropriate type using the <code>Host.cast()</code> methods.
-	 * 
-	 * @param host The host type we are part of
-	 * @param hostReference A reference to the host itself
-	 */
+    /**
+     * 创建一个新的连接，该连接将位于由 {@link Host} 枚举标识的宿主类型内部。<br>
+     * 此外，我们还会传入对宿主对象本身的引用。<br>
+     * 任何确实需要回访宿主的特殊操作，都可以使用 <code>Host.cast()</code> 方法将此引用强制转换为适当的类型。<br>
+     * 
+     * @param host 所属的宿主类型
+     * @param hostReference 对宿主对象本身的引用
+     */
 	public Connection( Host host, Object hostReference )
 	{
 		this.host = host;
@@ -119,14 +118,13 @@ public class Connection
 	///////////////////////////////////////////////////////////////////////////////////////
 	///  Connection Lifecycle Methods   ///////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Configure the connection using the given configuration data and link it to the provided
-	 * receiver. Incoming messages should be routed to the receiver.
-	 * 
-	 * @param configuration Configuration data that was extracted from the RID
-	 * @param receiver The component that should receive incoming messages from the network medium
-	 * @throws JConfigurationException Thown if there is an error in the configuration data
-	 */
+    /**
+     * 使用给定的配置数据对连接进行配置，并将其与提供的接收器关联。<br>
+     * 
+     * @param configuration 从RID中提取的配置数据
+     * @param receiver 应接收来自网络介质的传入消息的组件
+     * @throws JConfigurationException
+     */
 	public void configure( ConnectionConfiguration configuration, IApplicationReceiver appReceiver )
 		throws JConfigurationException
 	{
@@ -154,12 +152,12 @@ public class Connection
 		}
 	}
 
-	/**
-	 * This method is called when the connection should establish itself and commence processing.
-	 * Prior to {@link #connect()} calls, the connection should be configured but not active.
-	 * 
-	 * @throws JRTIinternalError If there is a problem encountered during connection
-	 */
+    /**
+     * 当连接需要建立自身并开始处理时，将调用此方法。<br>
+     * 在调用 {@link #connect()} 之前，连接应已完成配置但处于非活动状态。<br>
+     * 
+     * @throws JRTIinternalError If there is a problem encountered during connection
+     */
 	public void connect() throws JRTIinternalError
 	{
 		// log some initialization information
@@ -178,11 +176,11 @@ public class Connection
 		logger.trace( "Transport is now open [%s/%s]", name, this.transport.getType() );
 	}
 	
-	/**
-	 * Called when the owner is shutting down. All active connections should be closed.
-	 * 
-	 * @throws JRTIinternalError If there is a problem encountered during connection
-	 */
+    /**
+     * 当所有者正在关闭时调用。所有活动的连接都应被关闭。
+     * 
+     * @throws JRTIinternalError
+     */
 	public void disconnect() throws JRTIinternalError
 	{
 		logger.debug( "Disconnecting..." );
@@ -192,8 +190,7 @@ public class Connection
 	}
 
 	/**
-	 * This method will send an {@link RtiProbe}. If we get a response, we know there
-	 * is an RTI out there. If we don't, we know there isn't one.
+	 * 此方法将发送一个 {@link RtiProbe}。如果收到响应，则说明存在一个RTI；如果没有收到响应，则说明不存在RTI。
 	 * 
 	 * @return <code>true</code> if there is an RTI out there; <code>false</code> otherwise
 	 */
@@ -207,49 +204,44 @@ public class Connection
 	///////////////////////////////////////////////////////////////////////////////////////
 	///  Message SENDING methods   ////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Data messages are intended to be sent to all federates within a federation.
-	 * Although they may be routed through the RTI, they are not a control message.
-	 * Data messages do NOT require or expect a response. 
-	 * <p/>
-	 * Their use is currently limited to attribute reflections and interactions. Although
-	 * these messages are only a small subset of all those available, in any given federation
-	 * they will represent the _vast_ majority of the volume of messages exchanged and so often
-	 * can use a faster network path than control messages.
-	 * 
-	 * @param message The message to send to all other federates
-	 * @throws JException If there is a problem sending the message
-	 */
+    /**
+     * 数据消息旨在发送给联邦内的所有联邦成员。<br>
+     * 尽管它们可能通过RTI进行路由，但它们不属于控制消息。<br>
+     * 数据消息不需要也不期望收到响应。<br>
+     * <p/>
+     * 目前，它们的使用仅限于属性反射和交互。<br>
+     * 尽管这类消息只占所有可用消息的一小部分，但在任何特定的联邦中，它们通常会构成交换消息总量的绝大部分，因此常常可以使用比控制消息更快的网络路径。<br>
+     * 
+     * @param message 要发送给所有其他联邦成员的消息
+     * @throws JException
+     */
 	public void sendDataMessage( PorticoMessage message ) throws JException
 	{
 		Message outgoing = new Message( message, CallType.DataMessage, 0 );
 		protocolStack.down( outgoing );
 	}
 
-	/**
-	 * Builds and sends a notification message down the protocol stack to the transport.
-	 * This message will carry the call type {@link CallType#Notification} to signal that
-	 * it is a control message that does not require a response.
-	 * 
-	 * @param message The message that should be sent out, populated with the target federate
-	 *                and any other appropriate information.
-	 * @throws JException If there is a problem sending the message
-	 */
+    /**
+     * 构建一个通知消息并将其沿协议栈向下发送至传输层。<br>
+     * 该消息将携带调用类型 {@link CallType#Notification}，以表明它是一个不需要响应的控制消息。<br>
+     * 
+     * @param message  要发送出去的消息，需填充目标联邦成员及任何其他适当的信息
+     * @throws JException
+     */
 	public void sendNotification( PorticoMessage message ) throws JException
 	{
 		Message outgoing = new Message( message, CallType.Notification, 0 );
 		protocolStack.down( outgoing );
 	}
 	
-	/**
-	 * Control messages are ones that expect a response. When a component wants to send a
-	 * control message it packs it into a {@link MessageContext} and passes it to the connection.
-	 * This call is expected to BLOCK while a response is sought. At the conclusion of this
-	 * call, a response should be populated in the {@link MessageContext}. 
-	 * 
-	 * @param context Contains the request. Response will be put in here.
-	 * @throws JRTIinternalError If there is a problem processing the request.
-	 */
+    /**
+     * 控制消息是需要响应的消息。<br>
+     * 当某个组件想要发送控制消息时，会将其打包到一个 {@link MessageContext} 中，并传递给连接。<br>
+     * 此调用在等待响应期间会阻塞。在该调用结束时，响应应被填充到 {@link MessageContext} 中。<br>
+     * 
+     * @param context Contains the request. Response will be put in here.
+     * @throws JRTIinternalError If there is a problem processing the request.
+     */
 	public void sendControlRequest( MessageContext context ) throws JRTIinternalError
 	{
 		// FIXME -- REMOVE ME -- Left here on purpose to flag an issue.
@@ -276,12 +268,11 @@ public class Connection
 	///////////////////////////////////////////////////////////////////////////////////////
 	///  Message RECEIVING methods   //////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * A message has been received (and has come all the way up the protocol stack).
-	 * It's time to do something intelligent with it.
-	 * 
-	 * @param message The message that was received. 
-	 */
+    /**
+     * 处理已接收到的一条消息（并且已经沿协议栈向上传递完毕）。
+     * 
+     * @param message The message that was received.
+     */
 	protected void receive( Message message )
 	{
 		Header header = message.getHeader();

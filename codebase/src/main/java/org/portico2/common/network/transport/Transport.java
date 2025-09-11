@@ -24,14 +24,11 @@ import org.portico2.common.network.configuration.protocol.ProtocolConfiguration;
 import org.portico2.common.network.protocol.Protocol;
 
 /**
- * The {@link Transport} class is the parent of all implementations of a particular network
- * protocol/sending approach. Concrete implementations are expected to take a message and 
- * put it onto the network (or share it with the federation somehow), and to take messages
- * received over the transport and pass them up the protocol stack.<p/>
- * 
- * To support this, {@link Transport} extends {@link Protocol} and for each connection,
- * a single {@link Transport} implementation will <i>always</i> be the last element of
- * the {@link ProtocolStack}.
+ * 该类是所有特定网络协议/发送方式实现的父类。<br>
+ * 具体的实现需要负责将消息发送到网络上（或以某种方式与联邦共享），并接收通过该传输层收到的消息，然后将其向上传递给 ProtocolStack。
+ * </p>
+ * 为了支持这一功能，{@link Transport} 继承了 {@link Protocol}，<br>
+ * 并且对于每个连接，一个具体的 {@link Transport} 实现将始终作为 {@link ProtocolStack} 的最后一个元素。
  */
 public abstract class Transport extends Protocol
 {
