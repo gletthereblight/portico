@@ -15,33 +15,33 @@
 package org.portico2.common.network;
 
 /**
- * Messages in Portico are broadly broken down into two type: Data and Control.
+ * Portico 中的消息大致分为两类：数据消息和控制消息。
  * <p/>
  * 
- * A control message is something that is exchanged exclusively between a single federate and
- * the RTI (in either direction). These always use a reliable transport and can be considered
- * point-to-point in semantics. How that translates onto the network depends on the specifics
- * off the connection implementation.
+ * <b>控制消息</b>
+ * <p/>
+ * 是仅在单个联邦成员与 RTI 之间（任一方向）交换的消息。<br>
+ * 这类消息始终使用可靠的传输方式，在语义上可视为点对点通信。其在网络上的具体实现方式取决于连接实现的具体细节。<br>
  * <p/>
  * 
- * A data message is identified as a "high-volume" data carrying message. It is a message that
- * semantically is more like a broadcast. Attribte updates and reflections are the most common
- * (currently only) data messages. This type exists so that connections can efficiently route
- * and filter messages that should be delivered in high-volume, as these are the ones that will
- * affect performance the most.
+ * <b>数据消息</b>
+ * <p/>
+ * 被定义为“高容量”的载荷消息。它在语义上更像是一种广播。<br>
+ * 属性更新和反射是最常见（目前也是唯一）的数据消息类型。定义此类型是为了让连接能够高效地路由和过滤需要大量发送的消息，因为这些消息对性能的影响最大。<br>
  * <p/>
  * 
- * A notification is effectively an asynchronous control message (no response required). It will
- * typically be addressed to a subset of the federation, most often only one federate. It is also
- * typically an RTI->Federate message, representing things like discovery notifications and so on. 
+ * <b>通知</b>
+ * <p/>
+ * 实质上是一种异步控制消息（不需要响应）。<br>
+ * 它通常发往联邦的一个子集，最常见的是仅发给一个联邦成员。通常也是由 RTI 发送给联邦成员，用于表示诸如发现通知等事件。<br>
  * 
- * This enumeration identifies the type of message that is being sent:
+ * 此枚举标识了正在发送的消息类型：<br>
  * <ul>
- *   <li><b>DataMessage</b>: A message that should be broadcast to all participants.</li>
- *   <li><b>Notification</b>: A one-way message that does not require a response (typically rti->fed)</li>
- *   <li><b>ControlRequest</b>: A control request message that requires a response (typically fed->rti)</li>
- *   <li><b>ControlResponseOK</b>: A success response to a control request.</li>
- *   <li><b>ControlResponseErr</b>:An error response to a control request.</li>
+ * <li><b>DataMessage</b>: 应广播给所有参与者的消息</li>
+ * <li><b>Notification</b>: 不需要响应的单向消息（通常是 RTI -> 联邦成员）</li>
+ * <li><b>ControlRequest</b>: 需要响应的控制请求消息（通常是 联邦成员 -> RTI）</li>
+ * <li><b>ControlResponseOK</b>: 对控制请求的成功响应</li>
+ * <li><b>ControlResponseErr</b>:对控制请求的错误响应。</li>
  * </ul>
  * 
  */
