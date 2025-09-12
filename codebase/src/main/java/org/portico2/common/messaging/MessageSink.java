@@ -25,6 +25,12 @@ import org.apache.logging.log4j.Logger;
 import org.portico.lrc.compat.JConfigurationException;
 import org.portico.lrc.compat.JRTIinternalError;
 
+/**
+ * 核心的消息处理组件，负责接收、路由和处理各种类型的消息.
+ * 
+ * @author gaop
+ * @date 2025/09/12
+ */
 public class MessageSink
 {
 	//----------------------------------------------------------
@@ -57,15 +63,18 @@ public class MessageSink
 	//----------------------------------------------------------
 	//                    INSTANCE METHODS
 	//----------------------------------------------------------
-
-	public void process( MessageContext context )
-	{
-		IMessageHandler handler = messageHandlers.get( context.getRequest().getType() );
-		if( handler == null )
-			defaultHandler.process( context );
-		else
-			handler.process( context );
-	}
+    /**
+     * 消息处理和路由，当收到消息时，它会查找对应的 IMessageHandler，如果找不到则使用默认处理器 {@link DefaultHandler}
+     * 
+     * @param context
+     */
+    public void process(MessageContext context) {
+        IMessageHandler handler = messageHandlers.get(context.getRequest().getType());
+        if (handler == null)
+            defaultHandler.process(context);
+        else
+            handler.process(context);
+    }
 	
 	///////////////////////////////////////////////////////////////////////////////////////
 	///  Handler Management Methods   /////////////////////////////////////////////////////
@@ -83,15 +92,14 @@ public class MessageSink
 			handler.configure( properties );
 	}
 	
-	/**
-	 * Register the given handler to process messages of the specified {@link MessageType}.
-	 * If there is already a handler for this message, a chain will be created that will cause
-	 * each message to be passed to all handlers in the order in which they were added.
-	 * 
-	 * @param type The type of the message the handlers wants
-	 * @param handler The handler to use
-	 * @param JRTIinternalError There is a handler for the type that has registered as exclusive
-	 */
+    /**
+     * 注册指定的处理器，用于处理特定{@link MessageType}类型的消息。<br>
+     * 如果该消息类型已存在处理器，则会创建一个链式结构，使得每条消息将按照处理器的添加顺序依次传递给所有处理器。<br>
+     *
+     * @param type 处理器所希望处理的消息类型
+     * @param handler 要使用的处理器
+     * @throws JRTIinternalError 如果该消息类型已存在一个被注册为独占的处理器
+     */
 	public void register( MessageType type, IMessageHandler handler )
 		throws JRTIinternalError
 	{
@@ -118,18 +126,15 @@ public class MessageSink
 		}
 	}
 
-	/**
-	 * Register the given handler to process messages of the specified type. It will also give
-	 * the handler exclusive access to the message type. If there is already another handler
-	 * registered for the type, an exception will be thrown. If later on someone tries to add
-	 * a handler for a type that already has an exclusive handler, an exception will be thrown
-	 * then as well.
-	 * 
-	 * @param type The type of the message the handlers wants
-	 * @param handler The handler to use
-	 * @param JRTIinternalError There is already a handler registered for that message type, so we
-	 *                          can't have exclusive access
-	 */
+    /**
+     * 注册指定的处理器来处理特定类型的消息，并授予该处理器对该消息类型的独占访问权。<br>
+     * 如果该类型的消息已经注册了其他处理器，则会抛出异常。<br>
+     * 如果之后有人尝试为已存在独占处理器的消息类型添加新的处理器，同样会抛出异常。<br>
+     *
+     * @param type 处理器所希望处理的消息类型
+     * @param handler 要使用的处理器
+     * @throws JRTIinternalError 如果该消息类型已注册了处理器，因此无法获得独占访问权
+     */
 	public void registerExclusive( MessageType type, IMessageHandler handler )
 		throws JRTIinternalError
 	{

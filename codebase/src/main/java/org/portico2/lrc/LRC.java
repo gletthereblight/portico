@@ -60,7 +60,13 @@ public class LRC
 	protected LrcConfiguration configuration;
 	
 	// Messaging Infrastructure //
+	/**
+	 *  入站消息接收器，处理从其他联邦成员接收的消息.
+	 */
 	protected MessageSink incoming;
+	/**
+	 *  出站消息接收器，处理本地联邦成员触发需要发送到联邦的消息.
+	 */
 	protected MessageSink outgoing;
 	
 	// Network Infrastructure //
@@ -81,15 +87,13 @@ public class LRC
 		this( helper, RID.loadDefaultRid() );
 	}
 	
-	/**
-	 * Create a new LRC using the given specification helper. This method will initialize the
-	 * contained message sinks and create/initialize the contained IConnection.
-	 * 
-	 * @param rid        The configuration settings to use for this LRC
-	 * @param specHelper Instance of the {@link ISpecHelper} that HLA-version specific code can
-	 *                   use to cast down and access arbitrary facilities associated with the
-	 *                   implementation of that HLA interface version.
-	 */
+    /**
+     * 使用给定的规格辅助对象创建一个新的LRC。<br>
+     * 该方法将初始化内部的消息接收器，并创建/初始化内部的 LRCConnection。<br>
+     * 
+     * @param rid 为此LRC使用的配置设置
+     * @param specHelper {@link ISpecHelper} 的实例，特定HLA版本的代码可将其向下转型，以访问与该HLA接口版本实现相关的任意功能。
+     */
 	public LRC( ISpecHelper helper, RID rid )
 	{
 		if( rid == null )
