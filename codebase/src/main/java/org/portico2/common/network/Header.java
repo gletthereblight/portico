@@ -50,7 +50,7 @@ public class Header
 	//----------------------------------------------------------
 	//                    STATIC VARIABLES
 	//----------------------------------------------------------
-	/** Size in bytes of the fixed portion of a message header (size that is always present) */ 
+	/** 消息头部固定部分的大小（以字节为单位）（始终存在的部分的大小） */ 
 	public static final int HEADER_LENGTH = 12;
 	public static final byte[] EMPTY_HEADER = new byte[HEADER_LENGTH];
 
@@ -80,9 +80,9 @@ public class Header
 	///  Header Structure    /////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////
 	// Source for "protocol" python command line utility
-	//   "Flags:8,Payload Length:24"
-	//   "CType:4,FedID:4,MessageType:8,RequestId/FilteringId:16"
-	//   "Source Handle:16,Target Handle:16"
+	//   0~3  四个字节共 32 位: "Flags:8, Payload Length:24"
+	//   4~7  四个字节共 32 位: "CType:4, FedID:4, MessageType:8, RequestId/FilteringId:16"
+	//   8~11 四个字节共 32 位: "Source Handle:16, Target Handle:16"
 	//   "Payload...:128"
 	//   "(Optional) Authentication Token:32,(Optional) Encryption Nonce:128"
 	//

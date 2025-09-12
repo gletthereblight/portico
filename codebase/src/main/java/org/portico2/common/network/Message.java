@@ -37,9 +37,12 @@ public class Message
 	//----------------------------------------------------------
 	//                   INSTANCE VARIABLES
 	//----------------------------------------------------------
-	private CallType calltype;
-	private int requestId;
+	@SuppressWarnings("unused")
+    private CallType calltype;
+	@SuppressWarnings("unused")
 	private MessageType messageType;
+	
+	private int requestId;
 	
 	// Cached versions of the inflated messages.
 	// Deflated versions are only constructed when the buffer is first requested.
@@ -73,9 +76,7 @@ public class Message
 		this.requestHeader = null;    // set in deflateAndStoreResponse()
 		this.response = null;         // set in deflateAndStoreResponse()                       
 
-		// create a buffer big enough for the header and the message
-		// deflate the message into it
-		// populate the header in the buffer
+		// 创建一个足够容纳头部和消息的缓冲区，将消息压缩到该缓冲区中，在缓冲区中填充头部信息
 		this.buffer = MessageHelpers.deflate2( request, calltype, requestId );
 		this.header = new Header( buffer, 0 ); // FIXME
 	}
