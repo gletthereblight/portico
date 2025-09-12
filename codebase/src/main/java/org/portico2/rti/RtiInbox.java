@@ -79,25 +79,22 @@ public class RtiInbox
 			try
 			{
 				int federationHandle = request.getTargetFederation();
+				// 获取相应的联邦处理器
 				Federation targetFederation = federationManager.getFederation( federationHandle );
 				
 				if( targetFederation != null )
 				{
-					// Requesting federate must be a member of the target federation to submit federation 
-					// messages to it
+					// 请求联合的成员必须是目标联合体的成员，才能向其提交联合消息
 					int sourceFederate = request.getSourceFederate();
-					if( sourceFederate == PorticoConstants.RTI_HANDLE || 
-						targetFederation.containsFederate(sourceFederate) )
-					{
-						targetFederation.getIncomingSink().process( context );
-					}
-					else
-					{
-						String message = String.format( "Federate [%d] is not a member of federation [%s]", 
-						                                sourceFederate,
-						                                targetFederation.getFederationName() );
-						context.error( new JFederateNotExecutionMember(message) );
-					}
+                    if (sourceFederate == PorticoConstants.RTI_HANDLE
+                        || targetFederation.containsFederate(sourceFederate)) {
+                        // 交给相应联邦处理器进行处理
+                        targetFederation.getIncomingSink().process(context);
+                    } else {
+                        String message = String.format("Federate [%d] is not a member of federation [%s]",
+                            sourceFederate, targetFederation.getFederationName());
+                        context.error(new JFederateNotExecutionMember(message));
+                    }
 				}
 				else
 				{
