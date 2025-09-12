@@ -29,6 +29,14 @@ import org.portico2.common.network.transport.tcp.channel.ITcpChannelListener;
 import org.portico2.common.network.transport.tcp.channel.Metrics;
 import org.portico2.common.network.transport.tcp.channel.TcpChannel;
 
+/**
+ * 代表服务器端对每个连接客户端的代理对象，负责管理与单个客户端的 TCP 连接，包括套接字、输入输出流和通道的管理<br>
+ * <br>
+ * 每个代理都有唯一的 ID 标识，都有对应的代理对象，独立管理每个客户端连接的状态和生命周期。<br>
+ * 
+ * @author gaop
+ * @date 2025/09/12
+ */
 public class TcpClientProxy implements ITcpChannelListener
 {
 	//----------------------------------------------------------
@@ -97,6 +105,11 @@ public class TcpClientProxy implements ITcpChannelListener
 		this.running = true;
 	}
 
+    /**
+     * 在客户端连接时，执行握手协议，发送欢迎消息并同步就绪状态.
+     * 
+     * @throws IOException
+     */
 	private void handshake() throws IOException
 	{
 		//
@@ -169,6 +182,11 @@ public class TcpClientProxy implements ITcpChannelListener
 	///////////////////////////////////////////////////////////////////////////////////////
 	///  Message RECEIVING Methods   //////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
+	
+    /**
+     * 将消息向上传递给 RTI 处理.<br>
+     * 对于数据消息，转发给同一服务器下的其他客户端代理.<br>
+     */
 	@Override
 	public void receive( TcpChannel channel, byte[] payload ) throws JRTIinternalError
 	{
