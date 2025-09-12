@@ -79,13 +79,12 @@ public class MessageSink
 	///////////////////////////////////////////////////////////////////////////////////////
 	///  Handler Management Methods   /////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * When called, it will loop through all its contained {@link IMessageHandler}s and call
-	 * {@link IMessageHandler#configure(Map)}, passing the given properties.
-	 * 
-	 * @param properties The properties to pass to the handers
-	 * @throws JConfigurationException If there is a problem configuring any of the handlers
-	 */
+    /**
+     * 调用时，将遍历其包含的所有 {@link IMessageHandler}，并调用其 {@link IMessageHandler#configure(Map)} 方法，传入给定的属性集合。
+     *
+     * @param properties 要传递给处理器的属性
+     * @throws JConfigurationException 如果配置任何处理器时发生问题
+     */
 	public void configure( Map<String,Object> properties ) throws JConfigurationException
 	{
 		for( IMessageHandler handler : messageHandlers.values() )
