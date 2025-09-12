@@ -166,10 +166,17 @@ public class LRCState
 	/////////////////////////////////////////////////////////////////////////////
 	///  Notification Methods   /////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
-	/**
-	 * This notification is invoked when the local federate joins a federation. In the LRCState,
-	 * it will cache the given information and set up things like the local time status etc...
-	 */
+    /**
+     * 当本地联邦成员加入联邦时，将触发此通知。<br>
+     * 在 LRCState 中， 它会缓存给定的信息，并设置本地时间状态等相关内容。<br>
+     * 
+     * @param federateHandle
+     * @param federationHandle
+     * @param federateName
+     * @param federateType
+     * @param federationName
+     * @param fom
+     */
 	public void localFederateJoinedFederation( int federateHandle,
 	                                           int federationHandle,
 	                                           String federateName,

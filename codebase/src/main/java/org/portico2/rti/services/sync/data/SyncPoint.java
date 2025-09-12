@@ -19,34 +19,33 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class keeps track of all the information about a particular synchronization point. Each
- * point has an associated status that spells out where in the synchronization process the point
- * currently is. See {@link Status} for more details.
+ * 该类负责跟踪某个特定同步点的所有相关信息。核心作用是确保联邦中的所有参与者在特定时刻达到同步状态。<br>
+ * 每个同步点都有一个关联的状态，用于说明该点在同步过程中的当前所处阶段。<br>
+ * 更多细节请见下 {@link Status}。<br>
  * <p/>
- * The decision about who has the right to register a sync point is handles on a first-come,
- * first-serve apporach. 
+ * 
+ * 关于谁有权注册同步点的决策采用“先到先得（first-come, first-serve）”的方式处理。
  * <p/>
- * The point also keeps track of all the federates associated with it. Generally, a sync point will
- * be "federation-wide" (that is, meant for all federates). However, on creation, a point can have
- * restricted membership. If this is the case, only those federates whose handles are in the sync
- * point will be informed about its existence and only those federates will be considered when
- * deciding is a synchronization point has been achieved or not.
+ * 
+ * 该类还会跟踪与该同步点关联的所有联邦成员。 <br>
+ * 通常情况下，一个同步点是“全联邦范围”的（即面向所有联邦成员）。然而，在创建时，同步点的成员资格可以被限制。<br>
+ * 如果属于这种情况，则只有句柄包含在该同步点中的联邦成员才会获知其存在，并且在判断该同步点是否达成时，也仅考虑这些联邦成员。<br>
  */
 public class SyncPoint implements Serializable
 {
 	//----------------------------------------------------------
 	//                      ENUMERATIONS
 	//----------------------------------------------------------
-	/**
-	 * The current status of the sync point can be one of:
-	 * <ul>
-	 *  <li><b>REQUESTED</b>: the local federate has requested registration of the point</li>
-	 *  <li><b>PENDING</b>: some other federate has a registration request out for this point</li>
-	 *  <li><b>ANNOUNCED</b>: the point has been announced</li>
-	 *  <li><b>ACHIEVED</b>: the local federate has achieved the point</li>
-	 *  <li><b>SYNCHRONIZED</b>: all federates have achieved the point</li>
-	 * </ul>
-	 */
+    /**
+     * 同步点的当前状态可以是以下之一：<br>
+     * <ul>
+     * <li><b>REQUESTED（已请求）</b>：本地联邦成员已请求注册该同步点</li>
+     * <li><b>PENDING（待定）</b>：其他某个联邦成员已对该同步点发出注册请求</li>
+     * <li><b>ANNOUNCED（已宣告）</b>：该同步点已被宣告</li>
+     * <li><b>ACHIEVED（已达成）</b>：本地联邦成员已达成该同步点</li>
+     * <li><b>SYNCHRONIZED（已同步）</b>：所有联邦成员均已达成该同步点</li>
+     * </ul>
+     */
 	public enum Status
 	{
 		ANNOUNCED,     // the point has been announced
@@ -146,23 +145,22 @@ public class SyncPoint implements Serializable
 		return status == Status.SYNCHRONIZED;
 	}
 	
-	/**
-	 * Tests to see if all of the federates in the given set have achieved this synchronization
-	 * point yet or not.
-	 * <p/>
-	 * If this is a <b>federation-wide</b> synchronization point, the set of given federates should
-	 * be the set of federates currently in the federation. In this case, this method will return
-	 * true if all the given federate handles have been recorded as having achieved the point.
-	 * <p/>
-	 * If this is a <b>restricted</b> synchronization point, the set of given 
-	 * 
-	 * Tests to see if all the federates in the given set have achieved the point yet. If this
-	 * is a private sync point, <code>null</code> should be passed for the argument (this will
-	 * cause the method to use the stored set of federate handles). If this is a federation-wide
-	 * sync point, a set of all the handles should be passed. Assuming that a valid set is given
-	 * to the method, <code>true</code> will be returned if all the federates in the given set
-	 * have achieved the point.
-	 */
+    /**
+     * 检查给定集合中的所有联邦成员是否都已达成此同步点。
+     * <p/>
+     * 
+     * 如果这是一个<b>全联邦范围</b>的同步点，则传入的联邦成员集合应为当前联邦中所有成员的集合。<br>
+     * 在这种情况下，如果集合中所有联邦成员的句柄都已被记录为已达成该点，此方法将返回true。<br>
+     * <p/>
+     * 
+     * 如果这是一个<b>受限</b>的同步点，传入的集合应为该同步点所限定的联邦成员集合。<br>
+     * <p/>
+     * 
+     * 检查给定集合中的所有联邦成员是否已达成该同步点。<br>
+     * 如果这是私有同步点，应向该方法传入 <code>null</code>（这将导致方法使用内部存储的联邦成员句柄集合）。<br>
+     * 如果这是全联邦范围的同步点，则应传入所有成员句柄的集合。<br>
+     * 假设向该方法传入了有效的集合，当集合中所有联邦成员都已达成该同步点时，方法将返回<code>true</code>。
+     */
 	public boolean isSynchronized( Set<Integer> allFederates )
 	{
 		// if the given set is null, it means we should defer to the set we have locally

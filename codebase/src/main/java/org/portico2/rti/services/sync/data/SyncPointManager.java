@@ -29,10 +29,9 @@ import org.portico2.rti.federation.Federation;
 import org.portico2.rti.services.sync.data.SyncPoint.Status;
 
 /**
- * This class manages all the record keeping about synchronization points. It takes care of
- * transitioning them from one state to the next and keeping track of which points have been
- * achieved by which federates. The point also keeps a set of the handles of all federates that
- * have attempted to register it.
+ * 该类负责管理与同步点相关的所有记录工作。<br>
+ * 它负责处理同步点在各个状态之间的转换，并跟踪记录各个联邦成员已达成的同步点。<br>
+ * 此外，该同步点还会维护一个集合，用于记录所有尝试注册该同步点的联邦成员的句柄。<br>
  */
 public class SyncPointManager implements SaveRestoreTarget
 {
@@ -58,16 +57,14 @@ public class SyncPointManager implements SaveRestoreTarget
 	//----------------------------------------------------------
 	//                    INSTANCE METHODS
 	//----------------------------------------------------------
-	/**
-	 * Create and register a federation-wide synchronization point. If the label is already known,
-	 * an exception will be thrown. 
-	 * 
-	 * @param label      The label of the sync point to create
-	 * @param tag        The tag that was given during the point registration
-	 * @param registrant The handle of the federate that registered the point
-	 * @return The newly created and registered sync point
-	 * @throws JRTIinternalError If the point already exists
-	 */
+    /**
+     * @see #registerSyncPoint(String, byte[], Set, int)
+     * @param label
+     * @param tag
+     * @param registrant
+     * @return
+     * @throws JRTIinternalError
+     */
 	public synchronized SyncPoint registerSyncPoint( String label, byte[] tag, int registrant )
 		throws JRTIinternalError
 	{
@@ -75,16 +72,14 @@ public class SyncPointManager implements SaveRestoreTarget
 	}
 	
 	/**
-	 * Create and register a restricted synchronization point, with the participant federate
-	 * handles listed in the given set. If the label is already known, an exception will be thrown. 
-	 * 
-	 * @param label      The label of the sync point to create
-	 * @param tag        The tag that was given during the point registration
-	 * @param federates  The handles of the federates that should be subject to this sync point
-	 * @param registrant The handle of the federate that registered the point
-	 * @return The newly created and registered sync point
-	 * @throws JRTIinternalError If the point already exists
-	 */
+     * 创建并注册一个全联邦范围的同步点。如果该标签已存在，则会抛出异常。
+     *
+     * @param label 要创建的同步点的标签
+     * @param tag 注册该同步点时提供的标签
+     * @param registrant 注册该同步点的联邦成员的句柄
+     * @return 新创建并注册的同步点
+     * @throws JRTIinternalError 如果该同步点已存在
+     */
 	public synchronized SyncPoint registerSyncPoint( String label,
 	                                                 byte[] tag,
 	                                                 Set<Integer> federates,
