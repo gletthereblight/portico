@@ -48,9 +48,21 @@ public class Mom
 	 */
 	private enum MomType
 	{
+	    /**
+	     * 对象类，用于表示联邦实体
+	     */
 		Object,
+		/**
+		 * 属性类
+		 */
 		Attribute,
+		/**
+		 * 交互类，用于管理操作
+		 */
 		Interaction,
+		/**
+		 * 参数类
+		 */
 		Parameter
 	}
 	

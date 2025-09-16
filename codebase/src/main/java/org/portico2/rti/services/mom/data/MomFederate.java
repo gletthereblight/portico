@@ -38,9 +38,8 @@ import org.portico2.rti.services.object.data.ROCInstance;
 import org.portico2.rti.services.time.data.TimeManager;
 
 /**
- * Contains links between the {@link OCInstance} used to represent the federate in the federation
- * and the {@link Federate} management object that holds all the information. This class also
- * serializes the information for updates when they are requested.
+ * 包含用于在联邦中表示联邦成员的 {@link OCInstance} 与存储所有信息的 {@link Federate} 管理对象之间的关联。<br>
+ * 此类还在请求时对信息进行序列化以生成更新。<br>
  */
 public class MomFederate
 {
