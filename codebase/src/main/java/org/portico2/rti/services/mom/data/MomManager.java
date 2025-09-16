@@ -43,17 +43,14 @@ import org.portico2.rti.services.object.data.Repository;
 import org.portico2.rti.services.time.data.TimeManager;
 
 /**
- * The MOM manager takes care of all the MOM related tasks for a {@link Federation}.
+ * MOM 管理器负责 {@link Federation} 的所有与管理对象模型（MOM）相关的任务。
  * <p/>
- * When the MOM manager is created, it will create a <code>HLAmanager.HLAfederation</code> to
- * represent the federation in the federation's object repository.
+ * 创建 MOM 管理器时，它将创建一个 <code>HLAmanager.HLAfederation</code> 对象，以在联邦的对象仓库中表示该联邦。
  * <p/>
- * The MomManager will also create <code>HLAmanager.HLAfederate</code> for federates that join the
- * federation
+ * MOM 管理器还会为加入联邦的联邦成员创建 <code>HLAmanager.HLAfederate</code> 对象。
  * <p/>
- * <b>NOTE:</b> The methods in this class will only run if {@link PorticoConstants#isMomEnabled()}
- * returns <code>true</code> <i>at the time the LRC was initially created</i>. This generally
- * means that the MOM has to be enabled or disabled through the RID.
+ * <b>注意：</b> 此类中的方法仅在 LRC（本地路由组件）初始创建时，{@link PorticoConstants#isMomEnabled ()} 方法返回<code>true</code>的情况下才会运行。<br>
+ * 这通常意味着必须通过 RID（Run-Time Infrastructure Descriptor）来启用或禁用 MOM 功能。<br>
  */
 public class MomManager implements SaveRestoreTarget
 {

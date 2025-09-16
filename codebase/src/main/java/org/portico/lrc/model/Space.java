@@ -22,6 +22,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 一个 {@link Space} 是在 FOM 中定义的元数据类型，所包含的若干 {@link Dimension}（维度）。
+ * 
+ * @author gaop
+ * @date 2025/09/16
+ */
 public class Space implements Serializable
 {
 	//----------------------------------------------------------

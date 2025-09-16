@@ -22,8 +22,8 @@ import java.io.ObjectOutput;
 import org.portico2.rti.services.time.data.TimeManager;
 
 /**
- * This class contains a bunch of information outlining the current time related status of a
- * particular federate. Once instance exists for each federate inside the {@link TimeManager}.
+ * 该类包含描述特定联邦成员当前时间相关状态的一系列信息。<br>
+ * 在 {@link TimeManager} 内部，每个联邦成员对应一个该类的实例。<br>
  */
 public class TimeStatus implements Externalizable
 {
@@ -39,14 +39,14 @@ public class TimeStatus implements Externalizable
 	//----------------------------------------------------------
 	//                   INSTANCE VARIABLES
 	//----------------------------------------------------------
-	public TriState constrained   = TriState.OFF; // is the federate constrained?
-	public TriState regulating    = TriState.OFF; // is the federate regulating?
-	public TAR      advancing     = TAR.NONE;     // the current time advancement request status
-	public double   currentTime   = 0.0;          // the current federate time
-	public double   requestedTime = 0.0;          // the time the federate last requested
-	public double   lookahead     = 0.0;          // the lookahead value for the federate
-	public double   lbts          = 0.0;          // the federate-lbts (requested time+lookahead)
-	public boolean  asynchronous  = false;        // should "HLA messages" be delivered with TAR?
+	public TriState constrained   = TriState.OFF; // 该联邦成员是否受约束？
+	public TriState regulating    = TriState.OFF; // 该联邦成员是否在进行时间调节？
+	public TAR      advancing     = TAR.NONE;     // 当前的时间推进请求状态
+	public double   currentTime   = 0.0;          // 当前联邦成员的时间
+	public double   requestedTime = 0.0;          // 联邦成员上一次请求的时间
+	public double   lookahead     = 0.0;          // 该联邦成员的前瞻值
+	public double   lbts          = 0.0;          // 联邦成员的 LBTS（请求时间 + 前瞻值）
+	public boolean  asynchronous  = false;        // “HLA 消息”是否应在时间推进请求（TAR）期间递送
 
 	//----------------------------------------------------------
 	//                      CONSTRUCTORS
@@ -56,8 +56,8 @@ public class TimeStatus implements Externalizable
 	//                    INSTANCE METHODS
 	//----------------------------------------------------------
 	/**
-	 * Reset our time status back to defaults. Done when we join a federation for the first time.
-	 */
+     * 将我们的时间状态重置为默认值。在首次加入联邦时执行此操作。
+     */
 	public void reset()
 	{
 		this.constrained   = TriState.OFF; // is the federate constrained?
@@ -70,14 +70,14 @@ public class TimeStatus implements Externalizable
 		this.asynchronous  = false;        // should "HLA messages" be delivered with TAR?
 	}
 	
-	/**
-	 * This method will make all the appropriate internal changes to set the status once an advance
-	 * to the given time has been granted. Note that the method won't do any checks to see if the
-	 * advance is valid (for example, that it is to a time higher than previous), it will just make
-	 * all the changes needed assuming that the advance is valid. This will set the advancing
-	 * status of this federate to {@link TAR#PROVISIONAL}. When the grant callback is processed,
-	 * this should be flipped over to {@link TAR#NONE}.
-	 */
+    /**
+     * 该方法将在时间推进被批准后，进行所有必要的内部状态更新。<br>
+     * 注意，该方法不会检查推进是否有效，例如，新时间是否高于之前的时间，而是直接假设推进有效，并执行所需的所有状态变更。<br>
+     * </p>
+     * 
+     * 此方法会将该联邦成员的推进状态设置为 {@link TAR#PROVISIONAL}。<br>
+     * 当授予回调被处理后，该状态应被切换回 {@link TAR#NONE}。<br>
+     */
 	public void advanceFederate( double newTime )
 	{
 		this.currentTime = newTime;
@@ -93,13 +93,12 @@ public class TimeStatus implements Externalizable
 		advanceFederate( requestedTime );
 	}
 	
-	/**
-	 * Returns <code>true</code> if a time-advance grant can take place assuming that the federation
-	 * LBTS is as given. No internal changes are made, only a check.
-	 * <p/>
-	 * This method will also return <code>false</code> if an advance has already been granted for
-	 * a local federate, but that grant callback has not yet been delivered.
-	 */
+    /**
+     * 假设联邦 LBTS 为给定值，如果可以进行时间推进授权，则返回 <code>true</code>。<br>
+     * 该方法仅进行检查，不会修改任何内部状态。
+     * <p/>
+     * 如果本地联邦成员的时间推进请求已被授权，但授权回调尚未送达，该方法也将返回 <code>false</code>。<br>
+     */
 	public boolean canAdvance( double federationLbts )
 	{
 		// if there is no pending advancement, we're not ready
@@ -115,11 +114,10 @@ public class TimeStatus implements Externalizable
 		return requestedTime < federationLbts;
 	}
 
-	/**
-	 * Modifies the state appropriately to reflect a new time advance request to the given time.
-	 * This will not check that the change is valid, it will just blindly make the changes
-	 * (set the requested time, flick the advancing flag, etc...)
-	 */
+    /**
+     * 适当地修改状态，以反映已向给定时间发出新的时间推进请求。<br>
+     * 该方法不会检查变更是否有效，而是直接进行状态修改（设置请求时间、切换推进标志等）。<br>
+     */
 	public void timeAdvanceRequested( double requestedTime )
 	{
 		this.requestedTime = requestedTime;
@@ -127,11 +125,11 @@ public class TimeStatus implements Externalizable
 		this.advancing = TAR.REQUESTED;
 	}
 
-	/**
-	 * Sets the advancing status to {@link TAR#NONE}. This should be called for local federates
-	 * just after their callback has been delivered. The given time is what the curren time is
-	 * set to (as is the requested time).
-	 */
+    /**
+     * 将推进状态设置为 {@link TAR#NONE}。<br>
+     * 对于本地联邦成员，应在其回调被送达后立即调用此方法。<br>
+     * 参数给定的时间将被设置为当前时间（同时也作为请求时间）。<br>
+     */
 	public void advanceGrantCallbackProcessed( double newTime )
 	{
 		this.advancing = TAR.NONE;

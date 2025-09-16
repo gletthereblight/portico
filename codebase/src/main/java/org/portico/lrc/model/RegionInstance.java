@@ -18,14 +18,20 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.portico.lrc.compat.JArrayIndexOutOfBounds;
+import org.portico.lrc.model.Extent.Range;
 
 /**
- * This class represents a <b>HLA 1.3</b> Region.
+ * 该类表示一个 <b>HLA 1.3</b> 区域（Region）。
  * <p/>
- * A {@link RegionInstance} contains a number of {@link Extent}s, where each {@link Extent} contains
- * a set of upper and lower bounds for a number of {@link Dimension}s. {@link Extent}s are contained
- * within the {@link RegionInstance} in an array, so you must specify the size on construction.
- * A {@link RegionInstance} is also linked to a single routing {@link Space}.
+ * 一个 {@link RegionInstance} 包含多个 {@link Extent}，每个 {@link Extent} 又包含一组维度（{@link Dimension}）的上界和下界 {@link Range}。<br>
+ * {@link Extent} 以数组形式存储在 {@link RegionInstance} 中，因此必须在构造时指定其大小。<br>
+ * 一个 {@link RegionInstance} 还关联到一个单一的路由空间（routing {@link Space}）。<br>
+ * <p/>
+ * 
+ * Portico 中 DDM 结构的定义如下：<br>
+ * 一个 {@link Space} 是在 FOM 中定义的元数据类型。每个 {@link Space} 定义了其所包含的若干 {@link Dimension}（维度）。（Dimension 类本身也是一个元数据类）。<br>
+ * 一个 {@link RegionInstance} 包含多个 {@link Extent}。<br>
+ * 一个 {@link RegionInstance} 在运行时定义，每个 Region 实例关联到一个且仅一个 {@link Space}。<br>
  */
 public class RegionInstance implements Serializable
 {

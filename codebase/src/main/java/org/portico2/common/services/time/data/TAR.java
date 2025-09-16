@@ -15,12 +15,24 @@
 package org.portico2.common.services.time.data;
 
 /**
- * Enumeration that represents the various time advance request statuses a federate can have.
+ * Time Advance Request，“时间推进请求”，枚举类型，表示联邦成员可能具有的各种时间推进请求状态。
  */
 public enum TAR
 {
-	NONE,        // no current time advance request pending
-	REQUESTED,   // currently in a time advance request
-	AVAILABLE,   // currently in a time advance request available
-	PROVISIONAL; // an advance callback has been issued, but not yet consumed
+    /**
+     * 当前没有待处理的时间推进请求
+     */
+    NONE,
+    /**
+     * 当前处于时间推进请求中
+     */
+    REQUESTED,
+    /**
+     * 当前处于“可用时推进”请求中
+     */
+    AVAILABLE,
+    /**
+     * 已发出推进回调，但尚未被处理
+     */
+    PROVISIONAL;
 }

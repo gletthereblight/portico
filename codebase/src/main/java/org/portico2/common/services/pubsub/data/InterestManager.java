@@ -41,12 +41,9 @@ import org.portico2.common.PorticoConstants;
 import org.portico2.common.services.ddm.data.RegionStore;
 
 /**
- * The Interest Manager tracks federate publication and subscription data for a federation.
- * The manager works by storing groups of {@link OCInterest} and {@link ICInterest} instances
- * for each object/interaction class. These classes hold data about which federates have an
- * interest in them, and what the interest is. That is, rather than storing a separate set of
- * information for each federate, we store sets of information about a particular object/interaction
- * class (inside each is information about any federate).
+ * 兴趣管理器（Interest Manager）用于跟踪联邦中各联邦成员的发布与订阅信息。<br>
+ * 该管理器通过为每个对象类（Object Class）和交互类（Interaction Class）存储一组 {@link OCInterest} 和 {@link ICInterest} 实例来工作。<br>
+ * 这些类保存了哪些联邦成员对它们感兴趣以及兴趣类型的信息，也就是说，我们并非为每个联邦成员单独存储一套信息，而是按特定的对象类/交互类进行分组存储（每个分组内部包含对该类感兴趣的联邦成员相关信息）。<br>
  */
 public class InterestManager implements SaveRestoreTarget
 {
@@ -59,10 +56,10 @@ public class InterestManager implements SaveRestoreTarget
 	//----------------------------------------------------------
 	private ObjectModel fom;
 	private RegionStore regionStore;
-	private Map<OCMetadata,OCInterest> pObjects;
-	private Map<OCMetadata,OCInterest> sObjects;
-	private Map<ICMetadata,ICInterest> pInteractions;
-	private Map<ICMetadata,ICInterest> sInteractions;
+	private Map<OCMetadata,OCInterest> pObjects;       // 对象类发布兴趣
+	private Map<OCMetadata,OCInterest> sObjects;       // 对象类订阅兴趣
+	private Map<ICMetadata,ICInterest> pInteractions;  // 交互类发布兴趣
+	private Map<ICMetadata,ICInterest> sInteractions;  // 交互类订阅兴趣
 
 	//----------------------------------------------------------
 	//                      CONSTRUCTORS
@@ -80,16 +77,14 @@ public class InterestManager implements SaveRestoreTarget
 	//----------------------------------------------------------
 	//                    INSTANCE METHODS
 	//----------------------------------------------------------
-	/**
-	 * <b>NOTE!!!!</b>
-	 * <p/>
-	 * This call is essential to the operation of the interest manager. When the manager is
-	 * initialized there won't necessarily be a FOM available (for example, in the LRC we init
-	 * before we have joined any federation and received the FOM). Any attempt to use the
-	 * interest manager before the FOM is set via this method will cause an NPE.
-	 * 
-	 * @param fom The FOM we are using
-	 */
+    /**
+     * <b>注意！！！！</b>
+     * <p/>
+     * 此调用对兴趣管理器的正常运行至关重要。管理器初始化时，FOM（联邦对象模型）未必可用。<br>
+     * 例如，在 LRC 中，我们在加入任何联邦并接收到 FOM 之前就已初始化。如果在通过此方法设置 FOM 之前就使用兴趣管理器，将导致空指针异常（NPE）。<br>
+     * 
+     * @param fom 我们正在使用的FOM
+     */
 	public void setFOM( ObjectModel fom )
 	{
 		this.fom = fom;
@@ -98,17 +93,17 @@ public class InterestManager implements SaveRestoreTarget
 	//////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////// Generic Object Publication/Subscription Methods ////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * The same as {@link #register(Map, String, int, int, Set, int)} except that it passes
-	 * {@link PorticoConstants#NULL_HANDLE} for the region token and catches/ignores region
-	 * related exceptions. Use this for non-ddm registrations.
-	 * 
-	 * @param map        The map of interest data to update (publication or subscription)
-	 * @param action     A tag used in exceptions that describes what the action is attempting 
-	 * @param federate   The handle of the federate this registration is in reference to
-	 * @param clazz      The handle of the class this registration is for
-	 * @param attributes The set of attributes that are having an interest registered in
-	 */
+    /**
+     * 与 {@link #register(Map, String, int, int, Set, int)} 方法相同，但该方法为区域令牌（region token） 传入
+     * {@link PorticoConstants#NULL_HANDLE}，并捕获/忽略与区域相关的异常。<br>
+     * 请在非 DDM（动态数据分发）注册时使用此方法。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federate 当前注册所关联的联邦成员的句柄
+     * @param clazz 当前注册所针对的类的句柄
+     * @param attributes 正在注册兴趣的一组属性
+     */
 	private void register( Map<OCMetadata,OCInterest> map,
 	                       String action,
 	                       int federate,
@@ -132,22 +127,19 @@ public class InterestManager implements SaveRestoreTarget
 		}
 	}
 	                       	
-	/**
-	 * This method will register an interest (publication or subscription) of an object class for
-	 * the federate identified by the given federate handle. It will run all the appriorate checks
-	 * on the given information to validate that the handles exist in the model and are appropriate
-	 * (make sure the attributes are of the right object class etc...). If there is a problem with
-	 * the given information, an exception will be thrown. This version of the method accepts a
-	 * region token to associate with the unregister. Use it for DDM-related calls.
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this registration is in reference to
-	 * @param classHandle    The handle of the class this registration is for
-	 * @param attributes     The set of attributes that are having an interest registered in
-	 * @param regionToken    Token for the region to associate with the registration. If you don't
-	 *                       want to both with DDM stuff, pass {@link PorticoConstants#NULL_HANDLE}
-	 */
+    /**
+     * 该方法将为指定联邦成员句柄所标识的联邦成员，注册其对某个对象类的兴趣（发布或订阅）。<br>
+     * 它会对提供的信息执行所有适当的检查，以验证句柄在模型中存在且有效（例如确保属性属于正确的对象类等）。<br>
+     * 如果提供的信息存在问题，将抛出异常。<br>
+     * 本方法的此版本接受一个区域令牌（region token）与注册关联，供与 DDM（动态数据分发）相关的调用使用。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注册所关联的联邦成员的句柄
+     * @param classHandle 当前注册所针对的类的句柄
+     * @param attributes 正在注册兴趣的一组属性
+     * @param regionToken 与注册关联的区域令牌。如果不想处理 DDM 相关内容，可传入 {@link PorticoConstants#NULL_HANDLE}
+     */
 	private synchronized void register( Map<OCMetadata,OCInterest> map,
 	                                    String action,
 	                                    int federateHandle,
@@ -212,18 +204,17 @@ public class InterestManager implements SaveRestoreTarget
 		interest.registerInterest( federateHandle, attributes, region /*null ok*/ );
 	}
 	
-	/**
-	 * This method will unregister any interest the specified federate has in the identified
-	 * object class. If the class doesn't exist in the FOM, or the particular federate didn't have
-	 * an interest in it, an exception will be thrown. This method will throw a
-	 * {@link NoRegistration} if there is no registration. Wrapper methods can extract the message
-	 * and throw an appropriate exception type. 
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this unregistration is in reference to
-	 * @param classHandle    The handle of the class this unregistration is for
-	 */
+    /**
+     * 该方法将注销指定联邦成员对某个特定对象类的所有兴趣。<br>
+     * 如果该类在 FOM 中不存在，或该联邦成员对该类原本就没有注册兴趣，则会抛出异常。<br>
+     * 如果没有注册记录，此方法将抛出一个 {@link NoRegistration} 异常。<br>
+     * 包装方法（Wrapper methods）可以提取该异常的消息，并抛出相应类型的合适异常。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注销所关联的联邦成员的句柄
+     * @param classHandle 当前注销所针对的类的句柄
+     */
 	private void unregister( Map<OCMetadata,OCInterest> map,
 	                         String action,
 	                         int federateHandle,
@@ -241,21 +232,19 @@ public class InterestManager implements SaveRestoreTarget
 		}
 	}
 
-	/**
-	 * This method will unregister any interest the specified federate has in the identified
-	 * object class. If the class doesn't exist in the FOM, or the particular federate didn't have
-	 * an interest in it, an exception will be thrown. This method will throw a
-	 * {@link NoRegistration} if there is no registration. Wrapper methods can extract the message
-	 * and throw an appropriate exception type. This version of the method accepts a region token
-	 * to associate with the unregister. Use it for DDM-related calls.
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this unregistration is in reference to
-	 * @param classHandle    The handle of the class this unregistration is for
-	 * @param regionToken    Token for the region to associate with the registration. If you don't
-	 *                       want to both with DDM stuff, pass {@link PorticoConstants#NULL_HANDLE}
-	 */
+    /**
+     * 该方法将注销指定联邦成员对某个特定对象类的所有兴趣。<br>
+     * 如果该类在 FOM 中不存在，或该联邦成员对该类原本就没有注册兴趣，则会抛出异常。<br>
+     * 如果没有注册记录，此方法将抛出一个 {@link NoRegistration} 异常。<br>
+     * 包装方法（Wrapper methods）可以提取该异常的消息，并抛出相应类型的合适异常。<br>
+     * 本方法的此版本接受一个区域令牌（region token）与注销操作关联。请在与 DDM（动态数据分发）相关的调用中使用。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注销所关联的联邦成员的句柄
+     * @param classHandle 当前注销所针对的类的句柄
+     * @param regionToken 与注销操作关联的区域令牌。如果不想处理 DDM 相关内容，可传入 {@link PorticoConstants#NULL_HANDLE}
+     */
 	private synchronized void unregister( Map<OCMetadata,OCInterest> map,
 	                                      String action,
 	                                      int federateHandle,
@@ -287,20 +276,18 @@ public class InterestManager implements SaveRestoreTarget
 		interest.removeInterest( federateHandle, region );
 	}
 
-	/**
-	 * This method will unregister any interest the associated fedeate has in the specified
-	 * attributes of the given class. If other attributes in the class were also registered,
-	 * that registration will still remain after this caall. If the given set of attribute
-	 * handles is either <code>null</code> or empty, the entire interest (*ALL* attributes)
-	 * will be removed. If the object class cannot be found, or the record doesn't exist, an
-	 * exception will be thrown.
-	 * 
-	 * @param map         The map of interest data to update (publication or subscription)
-	 * @param action      A tag used in exceptions that describes what the action is attempting 
-	 * @param federate    The handle of the federate this unregistration is in reference to
-	 * @param classHandle The handle of the class this unregistration is for
-	 * @param attributes  The set of attributes that are having an interest registered in
-	 */
+    /**
+     * 该方法将注销关联的联邦成员对指定类中某些特定属性的兴趣。<br>
+     * 如果该类中的其他属性之前也注册了兴趣，则这些注册在调用此方法后仍然保留。<br>
+     * 如果给定的属性句柄集合为 <code>null</code> 或为空，则将移除对该类的全部兴趣（所有属性）。<br>
+     * 如果找不到对应的对象类，或相关记录不存在，则会抛出异常。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federate 当前注销所关联的联邦成员的句柄
+     * @param classHandle 当前注销所针对的类的句柄
+     * @param attributes 正在注销其兴趣的一组属性
+     */
 	private void unregister( Map<OCMetadata,OCInterest> map,
 	                         String action,
 	                         int federate,
@@ -319,24 +306,20 @@ public class InterestManager implements SaveRestoreTarget
 		}
 	}
 	
-
-	/**
-	 * This method will unregister any interest the associated fedeate has in the specified
-	 * attributes of the given class. If other attributes in the class were also registered,
-	 * that registration will still remain after this caall. If the given set of attribute
-	 * handles is either <code>null</code> or empty, the entire interest (*ALL* attributes)
-	 * will be removed. If the object class cannot be found, or the record doesn't exist, an
-	 * exception will be thrown. This version of the method accepts a region token to associate
-	 * with the unregister. Use it for DDM-related calls.
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this unregistration is in reference to
-	 * @param classHandle    The handle of the class this unregistration is for
-	 * @param attributes     The set of attributes that are having an interest registered in
-	 * @param regionToken    Token for the region to associate with the registration. If you don't
-	 *                       want to both with DDM stuff, pass {@link PorticoConstants#NULL_HANDLE}
-	 */
+    /**
+     * 该方法将注销关联的联邦成员对指定类中某些特定属性的兴趣。<br>
+     * 如果该类中的其他属性之前也注册了兴趣，则这些注册在调用此方法后仍然保留。<br>
+     * 如果给定的属性句柄集合为 <code>null</code> 或为空，则将移除对该类的全部兴趣（所有属性）。<br>
+     * 如果找不到对应的对象类，或相关记录不存在，则会抛出异常。<br>
+     * 本方法的此版本接受一个区域令牌（region token）与注销操作关联。请在与 DDM（动态数据分发）相关的调用中使用。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注销所关联的联邦成员的句柄
+     * @param classHandle 当前注销所针对的类的句柄
+     * @param attributes 正在注销其兴趣的一组属性
+     * @param regionToken 与注册关联的区域令牌。如果不想处理 DDM 相关内容，可传入 {@link PorticoConstants#NULL_HANDLE}
+     */
 	private synchronized void unregister( Map<OCMetadata,OCInterest> map,
 	                                      String action,
 	                                      int federateHandle,
@@ -372,18 +355,16 @@ public class InterestManager implements SaveRestoreTarget
 		interest.removeInterest( federateHandle, attributes );
 	}
 	
-	/**
-	 * Get all the attributes that are currently registered by the identified federate handle. If
-	 * the class isn't registered by the federate, a {@link NoRegistration} is thrown.
-	 */
+    /**
+     * 获取指定联邦成员句柄当前已注册的所有属性。如果该联邦成员未注册该类，则抛出 {@link NoRegistration} 异常。
+     */
 	private Set<Integer> getRegisteredAttributes( Map<OCMetadata,OCInterest> map,
 	                                              String action,
 	                                              int federateHandle,
 	                                              int classHandle )
 		throws JObjectClassNotDefined, NoRegistration
 	{
-		// find the metadata for the object class so that we can locate the appropriate
-		// OCInterest and get all the registered attributes
+	    // 查找对象类的元数据，以便定位相应的 OCInterest 并获取所有已注册的属性
 		OCMetadata objectClass = fom.getObjectClass( classHandle );
 		if( objectClass == null )
 			throw new JObjectClassNotDefined( action+": object class not defined: "+classHandle );
@@ -399,10 +380,9 @@ public class InterestManager implements SaveRestoreTarget
 			return interest.getInterest( federateHandle );
 	}
 
-	/**
-	 * This method will check to see if the identified federate has registered an interest in the
-	 * given object class.
-	 */
+    /**
+     * 该方法用于检查指定的联邦成员是否已对给定的对象类注册了兴趣。
+     */
 	private boolean isObjectClassRegistered( Map<OCMetadata,OCInterest> map,
 	                                         int federateHandle,
 	                                         int classHandle )
@@ -416,10 +396,9 @@ public class InterestManager implements SaveRestoreTarget
 	}
 
 	/**
-	 * Returns <code>true</code> if the federate has a registered interest in the identified
-	 * attribute class. If the object or attribute classes can't be found, or the attribute
-	 * isn't registered, <code>false</code> is returned.
-	 */
+     * 如果联邦成员对指定的属性类已注册兴趣，则返回 <code>true</code>。<br>
+     * 如果找不到对象类或属性类，或该属性未注册，则返回 <code>false</code>。<br>
+     */
 	private boolean isAttributeClassRegistered( Map<OCMetadata,OCInterest> map,
 	                                            int federateHandle,
 	                                            int classHandle,
@@ -436,16 +415,16 @@ public class InterestManager implements SaveRestoreTarget
 	//////////////////////////////////////////////////////////////////////////////////////////
 	////////////////// Generic Interaction Publication/Subscription Methods //////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * The same as {@link #register(Map, String, int, int, int)} except that it passes
-	 * {@link PorticoConstants#NULL_HANDLE} for the region token and catches/ignores region
-	 * related exceptions. Use this for non-ddm registrations.
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this registration is in reference to
-	 * @param classHandle    The handle of the class this registration is for
-	 */
+    /**
+     * 与 {@link #register(Map, String, int, int, int)} 方法相同，但该方法为区域令牌（region token）。<br>
+     * 传入 {@link PorticoConstants#NULL_HANDLE}，并捕获/忽略与区域相关的异常。<br>
+     * 请在非 DDM（动态数据分发）注册时使用此方法。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注册所关联的联邦成员的句柄
+     * @param classHandle 当前注册所针对的类的句柄
+     */
 	private void register( Map<ICMetadata,ICInterest> map,
 	                       String action,
 	                       int federateHandle,
@@ -467,22 +446,20 @@ public class InterestManager implements SaveRestoreTarget
 		}
 	}
 	
-	/**
-	 * Registers a publication or subscription interest in a particular interaction class for the
-	 * identified federate. Whether the interest is a pub or sub one depends on the map that is
-	 * passed to the method (e.g. for publications, pass the interaction-publications instance var).
-	 * If the interaction class isn't defined in the FOM, an exception will be thrown and the given
-	 * string will be used in the error message (so you can specify what you were trying to do).
-	 * This method takes into account region data when making the registration. If you don't want
-	 * DDM-related methods, you can pass {@link PorticoConstants#NULL_HANDLE} for the regionToken.
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this registration is in reference to
-	 * @param classHandle    The handle of the class this registration is for
-	 * @param regionToken    Token for the region to associate with the registration. If you don't
-	 *                       want to both with DDM stuff, pass {@link PorticoConstants#NULL_HANDLE}
-	 */
+    /**
+     * 为指定的联邦成员注册对某个特定交互类的发布或订阅兴趣。<br>
+     * 兴趣的类型（发布或订阅）取决于传递给该方法的映射（map）参数<br>
+     * （例如，对于发布，传入交互发布实例变量）。<br>
+     * 如果该交互类在 FOM 中未定义，将抛出异常，且给定的字符串将用于错误消息中，因此可以指明尝试执行的操作。<br>
+     * 本方法在注册时会考虑区域（region）数据。<br>
+     * 如果不需要 DDM（动态数据分发）相关功能，可为 regionToken 参数传入 {@link PorticoConstants#NULL_HANDLE}。<br>
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注册所关联的联邦成员的句柄
+     * @param classHandle 当前注册所针对的类的句柄
+     * @param regionToken 与注册关联的区域令牌。如果不想处理 DDM 相关内容，可传入 {@link PorticoConstants#NULL_HANDLE}
+     */
 	private synchronized void register( Map<ICMetadata,ICInterest> map,
 	                                    String action,
 	                                    int federateHandle,
@@ -526,12 +503,11 @@ public class InterestManager implements SaveRestoreTarget
 		interest.registerInterest( federateHandle, region );
 	}
 	
-	/**
-	 * The reverse of {@link #register(Map, String, int, int)}. Removes the publication or
-	 * subscription interest in the class for the identified federate. If the class doesn't exist
-	 * in the FOM, or the federate wasn't registered as having the interest, an exception will be
-	 * thrown.
-	 */
+    /**
+     * 与 {@link #register(Map, String, int, int)} 方法相反。<br>
+     * 用于移除指定联邦成员对某个类的发布或订阅兴趣。<br>
+     * 如果该类在 FOM 中不存在，或该联邦成员未注册此兴趣，则会抛出异常。<br>
+     */
 	private void unregisterInteraction( Map<ICMetadata,ICInterest> map,
 	                                    String action,
 	                                    int federateHandle,
@@ -553,21 +529,17 @@ public class InterestManager implements SaveRestoreTarget
 		}
 	}
 
-	/**
-	 * The reverse of {@link #register(Map, String, int, int)}. Removes the publication or
-	 * subscription interest in the class for the identified federate. If the class doesn't exist
-	 * in the FOM, or the federate wasn't registered as having the interest, an exception will be
-	 * thrown.
-	 * This method takes into account region data when making the registration. If you don't want
-	 * DDM-related methods, you can pass {@link PorticoConstants#NULL_HANDLE} for the regionToken.
-	 * 
-	 * @param map            The map of interest data to update (publication or subscription)
-	 * @param action         A tag used in exceptions that describes what the action is attempting 
-	 * @param federateHandle The handle of the federate this registration is in reference to
-	 * @param classHandle    The handle of the class this registration is for
-	 * @param regionToken    Token for the region to associate with the registration. If you don't
-	 *                       want to both with DDM stuff, pass {@link PorticoConstants#NULL_HANDLE}.
-	 */
+    /**
+     * 与 {@link #register(Map, String, int, int)} 方法相反。用于移除指定联邦成员对某个类的发布或订阅兴趣。<br>
+     * 如果该类在 FOM 中不存在，或该联邦成员未注册此兴趣，则会抛出异常。<br>
+     * 本方法在注销时会考虑区域（region）数据。如果不需要 DDM（动态数据分发）相关功能，可为 regionToken 参数传入 {@link PorticoConstants#NULL_HANDLE}。
+     * 
+     * @param map 要更新的兴趣数据映射（发布或订阅）
+     * @param action 在异常中使用的标签，用于描述当前操作的目的
+     * @param federateHandle 当前注销所关联的联邦成员的句柄
+     * @param classHandle 当前注销所针对的类的句柄
+     * @param regionToken 与注册关联的区域令牌。如果不想处理 DDM 相关内容，可传入 {@link PorticoConstants#NULL_HANDLE}。
+     */
 	private synchronized void unregisterInteraction( Map<ICMetadata,ICInterest> map,
 	                                                 String action,
 	                                                 int federateHandle,
@@ -586,8 +558,7 @@ public class InterestManager implements SaveRestoreTarget
 				throw new JRegionNotKnown( "token: " + regionToken );
 		}
 		
-		// find the metadata for the interaction class so that we can locate the appropriate
-		// ICInterest and remove the federate as a recorded interest
+		// 查找交互类的元数据，以便定位相应的 ICInterest 并移除该联邦成员的记录兴趣
 		ICMetadata interactionClass = fom.getInteractionClass( classHandle );
 		if( interactionClass == null )
 			throw new JInteractionClassNotDefined( action + ": class not defined: " + classHandle );
@@ -596,15 +567,13 @@ public class InterestManager implements SaveRestoreTarget
 		if( interest == null )
 			throw new NoRegistration( action+": federate has no pub/sub interest in "+classHandle );
 		
-		// null will be passed for the region if no region data was provided, this is equivalent
-		// to passing the default region causing region considerations to be ignored
+		// 如果未提供区域数据，则会传入 null，这等同于使用默认区域，从而使区域相关的考虑被忽略
 		interest.removeInterest( federateHandle, region );
 	}
 	
 	/**
-	 * This method will check to see if the identified federate has registered an interest in the
-	 * given interaction class.
-	 */
+     * 该方法用于检查指定的联邦成员是否已对给定的交互类注册了兴趣。
+     */
 	private boolean isInteractionClassRegistered( Map<ICMetadata,ICInterest> map,
 	                                              int federateHandle,
 	                                              int classHandle )
@@ -852,25 +821,19 @@ public class InterestManager implements SaveRestoreTarget
 		return interest;
 	}
 
-	/**
-	 * This method will generally be used to determine the type of class a federate should discover
-	 * a newly registered object as. Just because a federate isn't subscribed directly to the type
-	 * of the new object doesn't mean it shouldn't get the discovery. It could be subscribed to a
-	 * parent type, and thus discover it as that type.
-	 * <p/>
-	 * This method will find and return the most specific {@link OCMetadata} type representing the
-	 * object class that the federate subscribes to. It will start with the class identified by the
-	 * given handle. If the federate subscribes to that class, the metadata for it will be returned.
-	 * If it doesn't, this method will move on to the classes parent (returning the metadata for
-	 * that class if the federate subscribes to it) and so on until there are no more parents to
-	 * check. If this happens, null will be returned. If the initial class cannot be found, null
-	 * will be returned.
-	 * 
-	 * @param federateHandle The handle of the federate we are searching for a subscription for
-	 * @param initialClass The handle of the class to start looking for subscription data with
-	 * @return The OCMetadata of the most specific object class that the federate is subscribed to
-	 *         or null if discovery is not possible with the current subscription interest
-	 */
+    /**
+     * 该方法通常用于确定联邦成员在发现新注册对象时应将其视为哪种类型的类。<br>
+     * 联邦成员即使没有直接订阅该新对象的具体类型，也可能需要接收发现通知。<br>
+     * 例如，它可能订阅了该类型的父类，因此应以父类类型发现该对象。<br>
+     * <p/>
+     * 本方法将查找并返回代表联邦成员所订阅的、最具体的 {@link OCMetadata} 类型。<br>
+     * 它从给定句柄标识的类开始检查：如果联邦成员订阅了该类，则返回其元数据；如果没有，则继续检查其父类（若订阅了父类则返回父类元数据），依此类推，直至没有更多父类。<br>
+     * 若最终未找到任何订阅的父类，则返回 null。如果初始类无法找到，也返回 null。<br>
+     * 
+     * @param federateHandle 要为其查找订阅信息的联邦成员句柄
+     * @param initialClass 开始查找订阅信息的类句柄
+     * @return 联邦成员所订阅的最具体对象类的 OCMetadata，若当前订阅兴趣无法发现该对象则返回 null
+     */
 	public OCMetadata getDiscoveryType( int federateHandle, int initialClass )
 	{
 		// get the metadata for the original class so we can return it if necessary

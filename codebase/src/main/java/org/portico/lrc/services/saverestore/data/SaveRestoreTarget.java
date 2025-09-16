@@ -18,13 +18,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
- * Any component that needs to participate in the save/restore process must implement this
- * interface. The two methods allow each component to control what part of their state is
- * saved and to do any pre- or post-save/restore setup or cleanup.
+ * 任何需要参与保存/恢复过程的组件都必须实现此接口。<br>
+ * 这两个方法允许每个组件控制其状态的哪一部分被保存，并执行保存或恢复前后的准备工作或清理工作。<br>
  * <p/>
- * Additionally, any component that wants to be included in a save/restore set much register
- * itself with the {@link Serializer}, otherwise it won't
- *
+ * 此外，任何希望被包含在保存/恢复集合中的组件都必须向 {@link Serializer} 注册，否则它将不会被包含。<br>
  */
 public interface SaveRestoreTarget
 {

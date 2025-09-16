@@ -24,9 +24,7 @@ import java.util.Set;
 import org.portico.lrc.services.saverestore.data.SaveRestoreTarget;
 
 /**
- * This class handles requests to transfer ownership of attributes between federates. It records
- * active requests for particular attributes as they are received by the LRC (either for the local
- * federate or remote ones).
+ * 该类负责处理联邦成员之间属性所有权的转移请求。它会记录 LRC 收到的针对特定属性的活跃请求（这些请求可能来自本地联邦成员，也可能来自远程联邦成员）.
  */
 public class OwnershipManager implements SaveRestoreTarget
 {

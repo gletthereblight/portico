@@ -23,7 +23,7 @@ import java.io.Serializable;
 import org.portico.lrc.PorticoConstants;
 
 /**
- * This class contains metadata information about a FOM object class 
+ * 该类包含关于 FOM 对象类的元数据信息。
  */
 public class ICMetadata implements Serializable
 {
@@ -53,9 +53,8 @@ public class ICMetadata implements Serializable
 	//                      CONSTRUCTORS
 	//----------------------------------------------------------
 	/**
-	 * <b>NOTE:</b> This constructor should generally not be used. If you want an instance of this
-	 * class you should use the creation methods of {@link ObjectModel ObjectModel}.
-	 */
+     * <b>注意：</b> 通常不应使用此构造函数。如果需要该类的实例，应使用 {@link ObjectModel} 的创建方法。
+     */
 	public ICMetadata( String name, int handle )
 	{
 		this.name        = name;

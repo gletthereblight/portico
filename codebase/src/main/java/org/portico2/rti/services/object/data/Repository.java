@@ -26,9 +26,15 @@ import org.portico.lrc.compat.JObjectAlreadyRegistered;
 import org.portico.lrc.compat.JRTIinternalError;
 import org.portico.lrc.model.OCMetadata;
 import org.portico2.common.services.ddm.data.RegionStore;
+import org.portico2.rti.federation.Federation;
 
 /**
+ * 对象存储组件，负责管理联邦中所有对象实例的生命周期和状态。<br>
+ * 每个 {@link Federation} 都包含一个 Repository 实例。<br>
+ * 在 MOM 管理器中，Repository 用于创建和管理 MOM 对象实例。<br>
  * 
+ * @author gaop
+ * @date 2025/09/16
  */
 public class Repository
 {
@@ -40,11 +46,12 @@ public class Repository
 	//                   INSTANCE VARIABLES
 	//----------------------------------------------------------
 	private AtomicInteger nextObjectHandle;
-	private Map<Integer,ROCInstance> objectsByHandle;
-	private Map<String,ROCInstance>  objectsByName;
-	private Map<String,Integer>      reservedNames;
+	private Map<Integer,ROCInstance> objectsByHandle;  // 按句柄索引的对象实例映射
+	private Map<String,ROCInstance>  objectsByName;    // 按名称索引的对象实例映射
+	private Map<String,Integer>      reservedNames;    // 保留名称映射
 	
-	private RegionStore regionStore;
+	@SuppressWarnings("unused")
+    private RegionStore regionStore;
 
 	//----------------------------------------------------------
 	//                      CONSTRUCTORS

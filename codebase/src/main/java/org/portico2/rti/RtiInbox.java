@@ -26,6 +26,7 @@ import org.portico.lrc.model.ObjectModel;
 import org.portico.utils.messaging.PorticoMessage;
 import org.portico2.common.PorticoConstants;
 import org.portico2.common.messaging.MessageContext;
+import org.portico2.common.network.IApplicationReceiver;
 import org.portico2.common.services.federation.msg.CreateFederation;
 import org.portico2.common.services.federation.msg.DestroyFederation;
 import org.portico2.common.services.federation.msg.JoinFederation;
@@ -34,6 +35,12 @@ import org.portico2.rti.federation.Federate;
 import org.portico2.rti.federation.Federation;
 import org.portico2.rti.federation.FederationManager;
 
+/**
+ * 负责接收和路由来自网络连接的所有消息，并实现了核心的联邦管理功能。
+ * 
+ * @author gaop
+ * @date 2025/09/15
+ */
 public class RtiInbox
 {
 	//----------------------------------------------------------
@@ -65,16 +72,22 @@ public class RtiInbox
 	///////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////// message receiving methods //////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * 处理联邦管理相关的控制请求.
+     * 
+     * @param context MessageContext
+     * @param connection RtiConnection
+     * @throws JRTIinternalError
+     */
 	public void receiveControlMessage( MessageContext context,
 	                                   RtiConnection connection ) throws JRTIinternalError
 	{
 		PorticoMessage request = context.getRequest();
 		
-		// if the message is a "federation internal" one, find the federation and route it there
 		if( request.getType().isFederationMessage() )
 		{
 			////////////////////////////////////////////////////////////
-			// Federation Message - Find federation and forward to it //
+			// 对于联邦内部消息，找到目标联邦并转发给相应的联邦处理器 //
 			////////////////////////////////////////////////////////////
 			try
 			{
@@ -109,7 +122,7 @@ public class RtiInbox
 		else
 		{
 			///////////////////////////////////////////////////
-			// Non-Federation Message - Process at RTI level //
+			// 对于 RTI 级别的消息，直接在 RTI 层处理 //
 			///////////////////////////////////////////////////
 			try
 			{
@@ -149,15 +162,13 @@ public class RtiInbox
 		}
 	}
 
-	/**
-	 * This method will first find the {@link Federation} representing the target of the data
-	 * messages and it will then forward the message to all the {@link IConnection}s associated
-	 * with that federation (with the exception of the source - no loopback will happen).
-	 * 
-	 * @param message The message that was received
-	 * @param sender  The connection from which the message was received
-	 * @throws JRTIinternalError If the target federation is not known
-	 */
+    /**
+     * 该方法首先会查找代表数据消息目标的 {@link Federation}，然后将消息转发给与该联邦，关联的所有 {@link IApplicationReceiver}（发送方连接除外，即不会发生回环）.
+     * 
+     * @param message 接收到的消息
+     * @param sender 接收消息的连接
+     * @throws JRTIinternalError 如果目标联邦未知
+     */
 	public void receiveDataMessage( PorticoMessage message, RtiConnection sender )
 		throws JRTIinternalError
 	{

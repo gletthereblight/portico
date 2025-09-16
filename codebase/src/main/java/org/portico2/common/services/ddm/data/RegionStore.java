@@ -31,7 +31,7 @@ import org.portico.lrc.model.Space;
 import org.portico.lrc.services.saverestore.data.SaveRestoreTarget;
 
 /**
- * This class maintains a list of all {@link RegionInstance} instances known locally.
+ * 该类用于维护本地已知的所有 {@link RegionInstance} 实例的列表。
  */
 public class RegionStore implements SaveRestoreTarget
 {

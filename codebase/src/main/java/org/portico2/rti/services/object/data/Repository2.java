@@ -30,20 +30,14 @@ import org.portico.lrc.model.OCMetadata;
 import org.portico.lrc.services.saverestore.data.SaveRestoreTarget;
 import org.portico2.common.services.ddm.data.RegionStore;
 
-//
 // == NOTE ==
-// We are keeping this around so we can port code from it into the base Repository class.
-// That is the one we are using, as it will be a cut-down version just focused on the needs
-// of the RTI itself.
-//
-
+// 保留此类是为了能将其代码移植到基础 Repository 类中。
+// 我们实际使用的是基础 Repository 类，它是一个简化版本，仅专注于 RTI 自身的需求。
 /**
- * The {@link Repository2} is where all object information maintained by the Portico LRC is stored.
- * Internally, the Repository contains two separate stores: one for <b>discovered</b> instances
- * (those that the local federate has received a discoverObjectInstance() callback for) and
- * <b>undiscovered</b> instances (instances that the LRC has been notified about, but for which
- * the federate has not yet been notified about - generally due to the lack of subscription interest
- * in the class of the object).
+ * {@link Repository2} 是 Portico LRC 所维护的所有对象信息的存储位置。<br>
+ * 在内部，Repository 包含两个独立的存储区：<br>
+ * 一个用于<b>已发现</b>的实例（即本地联邦成员已收到 discoverObjectInstance() 回调通知的实例）；<br>
+ * 另一个用于<b>未发现</b>的实例（LRC 已收到通知但尚未向联邦成员通知的实例——通常是由于对该对象类缺乏订阅兴趣）。<br>
  */
 public class Repository2 implements SaveRestoreTarget
 {
@@ -54,8 +48,10 @@ public class Repository2 implements SaveRestoreTarget
 	//----------------------------------------------------------
 	//                   INSTANCE VARIABLES
 	//----------------------------------------------------------
-	private RegionStore regionStore;
-	private AtomicInteger nextObjectHandle;
+	@SuppressWarnings("unused")
+    private RegionStore regionStore;
+	@SuppressWarnings("unused")
+    private AtomicInteger nextObjectHandle;
 	private Map<Integer,OCInstance> undiscovered;
 	private Map<Integer,OCInstance> discovered;
 	private Map<String,Integer> reservedNames; // used or reserved names

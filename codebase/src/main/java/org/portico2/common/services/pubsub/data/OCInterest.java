@@ -26,14 +26,12 @@ import java.util.HashSet;
 import java.util.Collections;
 
 /**
- * This class represents an interest in an particular object class (be it publication or
- * subscription). Each instance contains a link to the {@link OCMetadata OCMetadata} instance it
- * represents an interest in.
+ * 该类表示对某个特定对象类（Object Class）的兴趣（无论是发布还是订阅）。<br>
+ * 每个实例都包含一个指向其感兴趣的那个 {@link OCMetadata} 实例的引用。<br>
  * <p/>
- * Maintained along with each interest is a set of federate handles that hold the interest data,
- * in addition to the set of attribute handles that they are interested in.
+ * 除了记录感兴趣的属性句柄集合外，每个兴趣实例还维护着一组持有该兴趣的联邦成员句柄。<br>
  * <p/>
- * Instances of this class are used by the {@link InterestManager}.
+ * 该类的实例由 {@link InterestManager} 使用。<br>
  */
 public class OCInterest implements Serializable
 {

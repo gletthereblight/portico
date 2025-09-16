@@ -26,28 +26,22 @@ import org.portico2.common.services.time.data.TAR;
 import org.portico2.common.services.time.data.TimeStatus;
 
 /**
- * This class is the central manager and keeper of time related information for each of the
- * federates in a federation. The time status for each federate is maintained and controlled here.
+ * 该类是联邦中每个联邦成员时间相关信息的中心管理器和存储器。每个联邦成员的时间状态都在此处维护和控制。
  * <p/>
- * <b>NOTE:</b> The various methods of this class do as they are told, no validation is completed.
- * Before methods are invoked on the {@link TimeManager}, all the necessary checks should be done
- * (such as whether the new time for a federate is above its current time before setting it). Also,
- * after some methods, further checks should be done to see if the status of the any federates
- * can change. For example, when a federate disables time regulation, it is important that a check
- * be done to see if there are any other federates that can now have a pending time advance
- * request granted. Nothing like this is done inside the {@link TimeManager}, it just maintains
- * state, leaving these considerations up to the developer.
+ * 
+ * <b>注意：</b> 该类的各个方法会直接执行被调用的操作，不进行任何验证。<br>
+ * 在调用 {@link TimeManager} 的方法之前，应完成所有必要的检查，例如，在设置新时间前，检查该时间是否大于联邦成员的当前时间。<br>
+ * 此外，在调用某些方法后，应进一步检查是否有联邦成员的状态可以更新。<br>
+ * 例如，当一个联邦成员禁用时间调节时，必须检查是否有其他联邦成员的待定时间推进请求现在可以被批准。<br>
+ * 这类逻辑不会在 {@link TimeManager} 内部处理，它只负责维护状态，相关决策由开发者负责。<br>
  * <p/>
- * <b>NOTE:</b> The {@link TimeManager} needs to be notified whenever federates join to or resign
- * from a federation in order to make sure that a {@link TimeStatus} entity exists or is removed
- * for them.
+ * 
+ * <b>注意：</b> 每当联邦成员加入或退出联邦时，都必须通知 {@link TimeManager}，以确保为其创建或移除相应的 {@link TimeStatus} 实体。
  * <p/>
- * <b>IMPLEMENTATION NOTE:</b> It is important to note that all the methods of this class will
- * not check that a federate exists before attempting to get its time status information. This
- * means that if you attempt to get, for example, the current time of a federate that isn't in
- * the federation (or null, or any other invalid key), you will get a NullPointerException. It
- * is expected that the various handlers will have taken care to ensure that a federate exists
- * before calling these methods. To be fair, this should never really be a problem.
+ * 
+ * <b>实现说明：</b> 需要特别注意的是，该类的所有方法在尝试获取联邦成员的时间状态信息前，不会检查该联邦成员是否存在。<br>
+ * 这意味着，如果尝试获取一个不在联邦中（或句柄为 null 或其他无效值）的联邦成员的当前时间，将会抛出 NullPointerException。预期调用这些方法的各个处理器已确保联邦成员存在。<br>
+ * 从实际角度看，这通常不应成为问题。<br>
  */
 public class TimeManager implements SaveRestoreTarget
 {
@@ -80,12 +74,11 @@ public class TimeManager implements SaveRestoreTarget
 	////////////////////////////////////////////////////////////
 	////////////////////// Helper Methods //////////////////////
 	////////////////////////////////////////////////////////////
-	/**
-	 * This method will interrogate the current time status of each of the recorded federates and
-	 * will determine the LBTS for *the federation* (that is, the lowest relevant LBTS of any
-	 * federate). Once it is been determined, the <code>lbts</code> property of the manager will
-	 * be set to the value. The new federation-lbts will be returned.
-	 */
+
+    /**
+     * 该方法将检查所有已记录联邦成员的当前时间状态，并确定整个联邦的 LBTS（即所有联邦成员中最小的相关 LBTS）。<br>
+     * 确定后，管理器的 <code>lbts</code> 属性将被设置为该值，方法将返回新的联邦 LBTS 值。<br>
+     */
 	public double recalculateLBTS()
 	{
 		// if there are no regulating federates, reset the LBTS

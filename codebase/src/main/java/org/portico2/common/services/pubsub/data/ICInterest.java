@@ -25,16 +25,13 @@ import org.portico.lrc.model.ICMetadata;
 import org.portico.lrc.model.RegionInstance;
 
 /**
- * This class represents a particular publication or subscription interest a particular federate
- * has in an interaction class. It contains the handle of the federate in question, as well as the
- * {@link ICMetadata} instance representing the interaction class. It also has an optional set of
- * {@link RegionInstance}s that represent the regions that the federate has associated with the 
- * interest (**only applies if the interest is a subscription).
+ * 该类表示某个特定联邦成员对某个交互类（Interaction Class）的发布或订阅兴趣。<br>
+ * 它包含相关联邦成员的句柄，以及代表该交互类的 {@link ICMetadata} 实例。<br>
+ * 此外，它还包含一个可选的 {@link RegionInstance} 集合，用于表示该联邦成员与此兴趣关联的区域（仅当该兴趣为订阅时适用）。<br>
  * <p/>
- * Instances of this class are used by the {@link InterestManager}.
+ * 该类的实例由 {@link InterestManager} 使用。<br>
  * <p/>
- * <b>NOTE that DDM information only applies to subscription interests. It is not used for
- * publication interests and can be safely ignored if it is representing a publication.
+ * <b>注意：DDM（动态数据分发）信息仅适用于订阅兴趣。对于发布兴趣，该信息不适用，可以安全忽略。</b>
  */
 public class ICInterest implements Serializable
 {

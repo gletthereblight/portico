@@ -19,7 +19,7 @@ import java.io.Serializable;
 import org.portico.lrc.model.datatype.IDatatype;
 
 /**
- * This class contains metadata about a FOM attribute class 
+ * 该类包含关于 FOM 属性类的元数据信息。
  */
 public class ACMetadata implements Serializable
 {
@@ -44,10 +44,9 @@ public class ACMetadata implements Serializable
 	//----------------------------------------------------------
 	//                      CONSTRUCTORS
 	//----------------------------------------------------------
-	/**
-	 * <b>NOTE:</b> This constructor should generally not be used. If you want an instance of this
-	 * class you should use the creation methods of {@link ObjectModel ObjectModel}.
-	 */
+    /**
+     * <b>注意：</b> 通常不应使用此构造函数。如果需要该类的实例，应使用 {@link ObjectModel ObjectModel} 的创建方法。
+     */
 	public ACMetadata( String name, IDatatype datatype, int handle )
 	{
 		this.name      = name;

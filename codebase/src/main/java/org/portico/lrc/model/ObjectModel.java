@@ -39,12 +39,10 @@ import org.portico.lrc.model.datatype.linker.LinkerException;
 import org.w3c.dom.Document;
 
 /**
- * This class represents a HLA FOM. It contains a set of object and interaction classes (routing
- * spaces not yet supported) which can be fetch via handle. It also contains links to the object
- * and interaction roots of the model. In order to provide support for the notion of a dynamic-FOM,
- * instances can be modified at any time <b>unless</b> the model has been locked with a call to the
- * {@link #lock() lock()} method. After this call, the model will become static and function as
- * normally expected within the HLA (note: models can be unlocked). 
+ * 该类表示一个 HLA FOM（联邦对象模型）。<br>
+ * 它包含一组对象类和交互类（目前尚未支持路由空间 {@link Space}），可通过句柄进行获取。同时，它还包含指向模型中对象类和交互类根节点的链接。<br>
+ * 为了支持“动态 FOM”的概念，实例可以在任何时候被修改，除非已通过调用 {@link #lock() lock()} 方法将模型锁定。<br>
+ * 调用该方法后，模型将变为静态，并按照 HLA 中的常规方式运行（注意：模型可以被重新解锁）。<br>
  */
 public class ObjectModel implements Serializable
 {

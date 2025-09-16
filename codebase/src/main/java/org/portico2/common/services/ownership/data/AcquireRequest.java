@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class contains information about any outstanding ownership acquisition requests.
- * It is only intended for internal use by the {@link OwnershipManager}.
+ * 该类包含有关任何未完成的所有权获取请求的信息。<br>
+ * 仅供 {@link OwnershipManager} 内部使用。<br>
  */
 public class AcquireRequest implements Serializable
 {

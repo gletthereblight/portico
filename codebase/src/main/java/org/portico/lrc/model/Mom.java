@@ -29,10 +29,9 @@ import org.portico.impl.HLAVersion;
 import org.portico.lrc.model.datatype.IDatatype;
 
 /**
- * This class helps do MOM related stuff (including 1.3/1516 conversions). As a result, it is VERY
- * ugly internally. I can't understand why the IEEE 1516 standards group decided to ENTIRELY BREAK
- * ALL BACKWARDS COMPATIBILITY by prefixing everything with "HLA", but they did. As a result, we
- * have to do all sorts of ugly stuff we wouldn't normally have to do, so get used to it.
+ * <code>MOM， Management Object Model，管理对象模型</code>。该类用于辅助处理与 MOM 相关的任务（包括 HLA 1.3 与 1516 版本间的转换）。<br>
+ * 因此，其内部实现非常复杂且不优雅。<br>
+ * 我无法理解 IEEE 1516 标准组为何决定通过给所有内容加上 "HLA" 前缀来完全破坏所有向后兼容性，但他们确实这么做了。结果，我们必须进行各种本可避免的复杂处理，只能去适应它。<br>
  */
 public class Mom
 {
@@ -61,7 +60,8 @@ public class Mom
 	private MomHandleTree momTree;
 	
 	// Lookup tables for mom types
-	private Map<Integer,MomTreeNode> objectLookup;
+	@SuppressWarnings("unused")
+    private Map<Integer,MomTreeNode> objectLookup;
 	private Map<Integer,MomTreeNode> attributeLookup;
 	private Map<Integer,MomTreeNode> interactionLookup;
 	private Map<Integer,MomTreeNode> parameterLookup;
@@ -79,25 +79,20 @@ public class Mom
 	//----------------------------------------------------------
 	//                    INSTANCE METHODS
 	//----------------------------------------------------------
-	/**
-	 * Builds the internal representation of metadata for standard MOM types.
-	 * <p/>
-	 * The tree contains nodes representing the hierarchy of objects, attributes, interactions and 
-	 * parameters and can be used to populate an {@link ObjectModel} with {@link OCMetadata}
-	 * and {@link ICMetadata} for all MOM types.
-	 * <p/>
-	 * This method also generates the lookup tables that resolve {@link MomTreeNode} metadata by handle
-	 */
+    /**
+     * 构建标准 MOM 类型元数据的内部表示。
+     * <p/>
+     * 该树包含代表对象、属性、交互和参数层次结构的节点，可用于向 {@link ObjectModel} 填充所有 MOM 类型的 {@link OCMetadata} 和 {@link ICMetadata}。
+     * <p/>
+     * 该方法还会生成通过句柄查找 {@link MomTreeNode} 元数据的查找表。
+     */
 	private void initialize()
 	{
 		HLAVersion[] v13 = { HLAVersion.JAVA1, HLAVersion.HLA13 };
 		HLAVersion[] v1516 = { HLAVersion.IEEE1516, HLAVersion.IEEE1516e };
 		
-		// Declaratively build the tree. The creator methods convert the provided names into a 
-		// {@link VersionedName} so that nodes can be resolved based on the naming conventions of all
-		// HLA specification versions
-		//
-		// NOTE: Handles generated here will be consistent across all federations running in the RTI
+		// 以声明方式构建树结构。创建方法会将提供的名称转换为 {@link VersionedName}，以便节点能够根据所有 HLA 规范版本的命名约定进行解析。
+		// 注意：此处生成的句柄在运行于 RTI 中的所有联邦中保持一致
 		MomTreeNodeBuilder b = new MomTreeNodeBuilder();
 		
 		//
@@ -446,20 +441,17 @@ public class Mom
 	//----------------------------------------------------------
 	//                     STATIC METHODS
 	//----------------------------------------------------------
-	/**
-	 * Fetch the handle for the MOM class of the given name.
-	 * <p/>
-	 * This function expects a fully qualified name be provided in the <code>className</code> parameter,
-	 * relative to <code>ObjectRoot</code> (e.g. "Manager.Federate")
-	 * <p/>
-	 * If the class name is unknown, {@link ObjectModel#INVALID_HANDLE} will be returned.
-	 * 
-	 * @param version the HLA version of the MOM naming scheme that the <code>className</code> parameter 
-	 *                conforms to
-	 * @param className the qualified name of the class to resolve the handle for, relative to ObjectRoot
-	 * @return the handle of the desired object class, or {@link ObjectModel#INVALID_HANDLE} if no class
-	 *         exists with the specified name
-	 */
+    /**
+     * 获取指定名称的 MOM 类的句柄。
+     * <p/>
+     * 该方法要求 <code>className</code> 参数提供一个完全限定的名称， 相对于 <code>ObjectRoot</code>（例如 "Manager.Federate"）。
+     * <p/>
+     * 如果类名未知，则返回 {@link ObjectModel#INVALID_HANDLE}。
+     * 
+     * @param version 参数 <code>className</code> 所遵循的 HLA 版本的 MOM 命名方案
+     * @param className 要解析句柄的类的限定名称，相对于 ObjectRoot
+     * @return 所需对象类的句柄；如果不存在具有指定名称的类，则返回 {@link ObjectModel#INVALID_HANDLE}
+     */
 	public static int getMomObjectClassHandle( HLAVersion version, String className )
 	{
 		MomTreeNode node = INSTANCE.momTree.find( className, 
@@ -475,18 +467,15 @@ public class Mom
 		}
 	}
 
-	/**
-	 * Fetch the handle for the MOM attribute of the given name that belongs to the MOM class of the given
-	 * handle. If the class handle is not recognized or the name isn't a valid attribute,
-	 * {@link ObjectModel#INVALID_HANDLE} will be returned.
-	 * 
-	 * @param version the HLA version of the MOM naming scheme that the <code>name</code> parameter 
-	 *                conforms to
-	 * @param classHandle the handle of the object class to search for the attribute in
-	 * @param the name of the attribute
-	 * @return the handle of the desired attribute, or {@link ObjectModel#INVALID_HANDLE} if the specified
-	 *         class does not exist or does not contain an attribute with the specified name
-	 */
+    /**
+     * 获取属于指定句柄的 MOM 类的、给定名称的 MOM 属性的句柄。<br>
+     * 如果类句柄无法识别，或名称不是有效属性，则返回 {@link ObjectModel#INVALID_HANDLE}。<br>
+     * 
+     * @param version 参数 <code>name</code> 所遵循的 HLA 版本的 MOM 命名方案
+     * @param classHandle 要搜索属性的对象类句柄
+     * @param name 属性的名称
+     * @return 所需属性的句柄；如果指定的类不存在，或该类不包含指定名称的属性，则返回 {@link ObjectModel#INVALID_HANDLE}
+     */
 	public static int getMomAttributeHandle( HLAVersion version, int classHandle, String name )
 	{
 		int attributeHandle = ObjectModel.INVALID_HANDLE;
@@ -526,21 +515,18 @@ public class Mom
 		return name;
 	}
 	
-	/**
-	 * Fetch the handle for the MOM interaction class of the given name. If the class name is unknown,
-	 * {@link ObjectModel#INVALID_HANDLE} will be returned.
-	 * <p/>
-	 * This function expects a fully qualified name be provided in the <code>className</code> parameter,
-	 * relative to <code>InteractionRoot</code> (e.g. "Manager.Federate.Request.RequestSubscriptions")
-	 * <p/>
-	 * If the class name is unknown, {@link ObjectModel#INVALID_HANDLE} will be returned.
-	 * 
-	 * @param version the HLA version of the MOM naming scheme that the <code>className</code> parameter 
-	 *                conforms to
-	 * @param className the qualified name of the interaction class relative to InteractionRoot
-	 * @return the handle of the desired interaction class, or {@link ObjectModel#INVALID_HANDLE} if no
-	 *         such interaction class exists
-	 */
+    /**
+     * 获取指定名称的 MOM 交互类的句柄。如果类名未知，则返回 {@link ObjectModel#INVALID_HANDLE}。
+     * <p/>
+     * 该方法要求 <code>className</code> 参数提供一个完全限定的名称，相对于 <code>InteractionRoot</code>，例如
+     * "Manager.Federate.Request.RequestSubscriptions"。
+     * <p/>
+     * 如果类名未知，则返回 {@link ObjectModel#INVALID_HANDLE}。
+     * 
+     * @param version 参数 <code>className</code> 所遵循的 HLA 版本的 MOM 命名方案
+     * @param className 交互类的限定名称，相对于 InteractionRoot
+     * @return 所需交互类的句柄；如果不存在该交互类，则返回 {@link ObjectModel#INVALID_HANDLE}
+     */
 	public static int getMomInteractionHandle( HLAVersion version, String className )
 	{
 		MomTreeNode node = INSTANCE.momTree.find( className, 
@@ -605,11 +591,11 @@ public class Mom
 		return name;
 	}
 
-	/**
-	 * This method will remove "HLA" from the front of any provided string and return the resulting
-	 * string. If the next letter is lower case, it will be made upper case. This will work on "."
-	 * separated names. For example: "HLAobjectRoot.HLAmanager" will become "ObjectRoot.Manager".
-	 */
+    /**
+     * 该方法将移除所提供字符串开头的 "HLA"，并返回处理后的字符串。<br>
+     * 如果 "HLA" 后的下一个字母是小写，则将其转换为大写。<br>
+     * 该方法适用于以 "." 分隔的名称。例如："HLAobjectRoot.HLAmanager" 将变为 "ObjectRoot.Manager"。<br>
+     */
 	public static String strip1516Crap( String name )
 	{
 		// break the string apart
@@ -739,25 +725,23 @@ public class Mom
 	/////////////////////////// MOM Hierarchy Generation Methods ////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////
 	
-	
-	/**
-	 * A helper class that allows declarative construction of the MOM tree.
-	 * <p/>
-	 * The {@link MomTreeNodeBuilder} class supports chained declarative building by returning a reference
-	 * to itself from each of the builder methods (e.g. {@link #object(String)}, 
-	 * {@link #attribute(String, String)}) and maintaining an internal context stack. For example an 
-	 * object class with attributes and a sub-class could be declared as such:
-	 * 
-	 * <pre>
-	 *  MomTreeNodeBuilder b = new MomTreeNodeBuilder();
-	 *  b.object("BaseClass")           // push an object node onto the context stack
-	 *    .attribute("baseAttribute")   // add an attribute to the current context (BaseClass)
-	 *    .object("ChildClass")         // push another object node onto the context stack
-	 *     .attribute("childAttribute") // add an attribute to the current context (BaseClass.ChildClass)
-	 *    .end()                        // pop the current context from the stack
-	 *  MomTreeNode baseNode = b.get(); // get the current context from the stack (BaseClass)
-	 * </pre>
-	 */
+    /**
+     * 一个辅助类，用于以声明方式构建 MOM 树。
+     * <p/>
+     * The {@link MomTreeNodeBuilder} 类通过在每个构建方法（例如
+     * {@link #object(String)}、{@link #attribute(String, String)}）中返回对自身的引用来支持链式声明式构建， 并维护一个内部上下文栈。<br>
+     * 
+     * 例如，一个包含属性和子类的对象类可以如下声明：<br>
+     * <pre>
+     *  MomTreeNodeBuilder b = new MomTreeNodeBuilder();
+     *  b.object("BaseClass")           // push an object node onto the context stack
+     *    .attribute("baseAttribute")   // add an attribute to the current context (BaseClass)
+     *    .object("ChildClass")         // push another object node onto the context stack
+     *     .attribute("childAttribute") // add an attribute to the current context (BaseClass.ChildClass)
+     *    .end()                        // pop the current context from the stack
+     *  MomTreeNode baseNode = b.get(); // get the current context from the stack (BaseClass)
+     * </pre>
+     */
 	private static class MomTreeNodeBuilder
 	{
 		private int objectCounter = 0;
@@ -1151,20 +1135,16 @@ public class Mom
 		}
 	}
 	
-	/**
-	 * A tree to hold the internal representation of metadata for standard MOM types.
-	 * <p/>
-	 * The tree contains nodes representing the hierarchy of objects, attributes, interactions and 
-	 * parameters and can be used to populate an {@link ObjectModel} with {@link OCMetadata}
-	 * and {@link ICMetadata} for all MOM types.
-	 * <p/>
-	 * To allow a cross-version lookup, we store a {@link VersionedName} for each node, so that we can 
-	 * resolve MOM type handles regardless of which naming version is being used.
-	 * <p/>
-	 * Nodes can be fetched from the tree by qualified name using 
-	 * {@link #find(String, HLAVersion, MomTreeNode)}, or by handle by calling 
-	 * {@link #find(MomType, int, MomTreeNode)}.
-	 */
+    /**
+     * 用于存储标准 MOM 类型元数据内部表示的树结构。<br>
+     * <p/>
+     * 该树包含代表对象、属性、交互和参数层次结构的节点，可用于向 {@link ObjectModel} 填充所有 MOM 类型的 {@link OCMetadata} 和 {@link ICMetadata}。<br>
+     * <p/>
+     * 为了支持跨版本查找，每个节点都存储了一个 {@link VersionedName}，以便我们能够解析 MOM 类型句柄，而无需关心当前使用的是哪个命名版本。<br>
+     * <p/>
+     * 可以通过限定名称调用 {@link #find(String, HLAVersion, MomTreeNode)} 方法从树中获取节点，或通过句柄调用
+     * {@link #find(MomType, int, MomTreeNode)} 方法获取。<br>
+     */
 	private static class MomHandleTree
 	{
 		private MomTreeNode objectRoot;
@@ -1284,12 +1264,11 @@ public class Mom
 	}
 	
 	/**
-	 * A node in the MomHandleTree.
+	 * {@link MomHandleTree} 中的一个节点。
 	 * <p/>
-	 * Nodes in the tree may represent Mom Object Classes, Attributes, Interaction Classes or Parameters.
+	 * 树中的节点可以表示 MOM 对象类、属性、交互类或参数。
 	 * <p/>
-	 * To allow a cross-version lookup, we store a {@link VersionedName} for each node, so that we can 
-	 * resolve MOM type handles regardless of which naming version is being used.
+	 * 为了支持跨版本查找，每个节点都存储了一个 {@link VersionedName}，以便我们能够解析 MOM 类型句柄，而无需关心当前使用的是哪个命名版本。
 	 */
 	private static class MomTreeNode
 	{
@@ -1329,7 +1308,8 @@ public class Mom
 			return this.supportedVersions.contains( version );
 		}
 		
-		public MomTreeNode getParent()
+		@SuppressWarnings("unused")
+        public MomTreeNode getParent()
 		{
 			return this.parent;
 		}

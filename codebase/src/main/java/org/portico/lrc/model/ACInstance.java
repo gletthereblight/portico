@@ -19,9 +19,8 @@ import org.portico.lrc.PorticoConstants;
 import java.io.Serializable;
 
 /**
- * This class represents a single instance of an attribute that exists inside an {@link OCInstance
- * OCInstance}. It contains information such as the handle and type (metadata) of the attribute,
- * however, it does not hold the value of the attribute.
+ * 该类表示存在于 {@link OCInstance} 中的一个属性实例。<br>
+ * 它包含属性的句柄和类型（元数据）等信息，但不保存属性的实际值。<br>
  */
 public class ACInstance implements Serializable
 {

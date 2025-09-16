@@ -16,6 +16,12 @@ package org.portico.lrc.model;
 
 import java.io.Serializable;
 
+/**
+ * FOM 中定义的元数据类型。多个 {@link Dimension}（维度）包含在一个 {@link Space} 内。
+ * 
+ * @author gaop
+ * @date 2025/09/16
+ */
 public class Dimension implements Serializable
 {
 	//----------------------------------------------------------

@@ -24,8 +24,7 @@ import org.portico.lrc.model.ObjectModel;
 import org.portico2.rti.RTI;
 
 /**
- * The purpose of the {@link FederationManager} is to keep track and state about the various
- * active federations that are being supported by the RTI instance in which they are contained.
+ * {@link FederationManager} 的作用是跟踪和管理 RTI 实例中所包含的各种正在运行的联邦的状态信息。
  */
 public class FederationManager
 {
@@ -75,17 +74,16 @@ public class FederationManager
 	////////////////////////////////////////////////////////////////////////////////////////
 	///  Federation Management   ///////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * Create a new federation with the given information and store it inside the manager before
-	 * returning it.
-	 * 
-	 * @param rti  The RTI this federation exists inside of
-	 * @param name The name of the federation
-	 * @param fom  The object model for the federation
-	 * @param hlaVersion Version of the HLA spec the federation should load message handlers for
-	 * @return A fresh {@link Federation} instance that is now active and stored inside the manager
-	 * @throws JConfigurationException If there is a problem configuring the handlers
-	 */
+    /**
+     * 根据提供的信息创建一个新的联邦，并在返回之前将其存储到管理器中.
+     * 
+     * @param rti 该联邦所处的 RTI
+     * @param name 联邦的名称
+     * @param fom 联邦的对象模型
+     * @param hlaVersion 联邦应加载消息处理器所对应的 HLA 规范版本
+     * @return 一个全新的 {@link Federation} 实例，该实例现已激活并存储在管理器中
+     * @throws JConfigurationException 如果在配置处理器时出现问题
+     */
 	public synchronized Federation createFederation( RTI rti,
 	                                                 String name,
 	                                                 ObjectModel fom,
@@ -99,6 +97,11 @@ public class FederationManager
 		return federation;
 	}
 	
+    /**
+     * 销毁联邦.
+     * 
+     * @param federation
+     */
 	public synchronized void destroyFederation( Federation federation )
 	{
 		federation.destroyedFederation();

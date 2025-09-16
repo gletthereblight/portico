@@ -26,11 +26,12 @@ import org.portico.lrc.compat.JCouldNotOpenFED;
 import org.portico.lrc.compat.JErrorReadingFED;
 
 /**
- * Represents the raw, unparsed content of a FED file
+ * 表示 FED 文件的原始、未解析的内容.
  */
 public class FomModule implements Serializable
 {
-	//----------------------------------------------------------
+    private static final long serialVersionUID = -3897692234564385684L;
+    //----------------------------------------------------------
 	//                    STATIC VARIABLES
 	//----------------------------------------------------------
 

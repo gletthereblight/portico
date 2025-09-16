@@ -22,22 +22,18 @@ import org.portico.lrc.PorticoConstants;
 import org.portico.lrc.compat.JArrayIndexOutOfBounds;
 
 /**
- * <b>All the below relates to HLA 1.3</b>
+ * <b>以下所有内容均与 HLA 1.3 相关</b>
  * <p/>
- * {@link Extent} is a construct used for DDM. Extents are created and populated at runtime
- * (much like ACInstances) and are not metadata/fom data (like ACMetadatas).
+ * {@link Extent} 是用于 DDM（动态数据分发）的结构。<br>
+ * Extents 在运行时创建并填充（类似于 ACInstances），而非元数据或 FOM 数据（如 {@link ACMetadata}）。<br>
+ * 每个 {@link Extent} 包含一组维度（{@link Dimension}）的上界和下界 {@link Range}。
  * <p/>
- * The DDM constructs for Portico are defined as follows:
- * <p/>A <b>{@link Space}</b> is a metadata type that is defined within the FOM
- * <p/>Each {@link Space} defines a number of <b>{@link Dimension}s</b> that it consists of.
- * (the Dimension class is also a metadata class).
- * <p/>A <b>{@link RegionInstance}</b> is defined at runtime. Each Region is associated with a
- * SINGLE {@link Space}
- * <p/>A {@link RegionInstance} contains a number of <b>{@link Extent}s</b>. Each {@link Extent}
- * defines a bound (a minimum and maximum value) for each {@link Dimension} in the {@link Space}
- * associated with the {@link RegionInstance} it is contained in.
+ * Portico 中 DDM 结构的定义如下：<br>
+ * 一个 {@link Space} 是在 FOM 中定义的元数据类型。每个 {@link Space} 定义了其所包含的若干 {@link Dimension}（维度）。（Dimension 类本身也是一个元数据类）。<br>
+ * 一个 {@link RegionInstance} 包含多个 {@link Extent}。<br>
+ * 一个 {@link RegionInstance} 在运行时定义。每个 Region 实例关联到一个且仅一个 {@link Space}。<br>
  * <p/>
- * Confused yet? Yeah, I was as well. Wait until you deal with 1516.
+ * 感到困惑了吗？我当初也是。等你接触 HLA 1516 版本时会更复杂。
  */
 public class Extent implements Serializable
 {
@@ -275,11 +271,10 @@ public class Extent implements Serializable
 	//////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////// Inner Class: Range ///////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * A Range is a structure that contains an upper and lower bound for a specific
-	 * {@link Dimension}. Multiple instances of these can be contained within a single
-	 * {@link Extent}.
-	 */
+    /**
+     * Range 是一个结构，用于包含特定 {@link Dimension}（维度）的上界和下界。<br>
+     * 单个 {@link Extent} 中可以包含多个这样的实例。<br>
+     */
 	public class Range implements Serializable
 	{
 		private static final long serialVersionUID = 98121116105109L;
